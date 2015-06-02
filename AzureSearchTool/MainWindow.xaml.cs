@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -66,6 +67,25 @@ namespace AzureSearchTool
             Index index = (Index) GridAvailableIndexes.SelectedItem;
             Model.SelectIndex(index);
             Flyout.IsOpen = false;
+        }
+
+        private async void Search(object sender, RoutedEventArgs e)
+        {
+
+            try
+            {
+                ProgressBar.IsIndeterminate = true;
+                Model.Search();
+            }
+            catch(Exception ex)
+            {
+                //todo handle this
+                throw ex;
+            }
+            finally
+            {
+                ProgressBar.IsIndeterminate = false;
+            }
         }
     }
 }

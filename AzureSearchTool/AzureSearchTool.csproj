@@ -93,6 +93,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="DynamicItem.cs" />
+    <Compile Include="DynamicItemCollection.cs" />
+    <Compile Include="DynamicPropertyDescriptor.cs" />
     <Compile Include="Field.cs" />
     <Compile Include="HideIfEmptyConverter.cs" />
     <Compile Include="Index.cs" />

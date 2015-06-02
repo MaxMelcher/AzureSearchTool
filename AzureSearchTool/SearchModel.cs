@@ -2,9 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
+using System.Dynamic;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
 
 namespace AzureSearchTool
@@ -40,22 +43,35 @@ namespace AzureSearchTool
                 {
                     return "Index not valid";
                 }
-                return string.Format("https://{0}.{1}/indexes/{2}/docs?search={3}&api-version={4}", Service, BaseUrl, Index.Name, Search, ApiVersion);
+                return string.Format("https://{0}.{1}/indexes/{2}/docs?search={3}&api-version={4}", Service, BaseUrl, Index.Name, SearchQuery, ApiVersion);
             }
-            set { _url = value; OnPropertyChanged("Url"); }
+            set
+            {
+                _url = value;
+                OnPropertyChanged("Url");
+            }
         }
 
-        public string Search
+        public string SearchQuery
         {
-            get { return _search; }
-            set { _search = value; OnPropertyChanged("Url"); }
+            get { return _searchQuery; }
+            set
+            {
+                _searchQuery = value;
+                OnPropertyChanged("Url");
+            }
         }
 
 
         public Index Index
         {
             get { return _index; }
-            set { _index = value; OnPropertyChanged("Index"); OnPropertyChanged("Url"); }
+            set
+            {
+                _index = value;
+                OnPropertyChanged("Index");
+                OnPropertyChanged("Url");
+            }
         }
 
         public string ApiVersion
@@ -74,11 +90,21 @@ namespace AzureSearchTool
         private string _error;
         private Index _index;
         private string _url;
-        private string _search;
+        private string _searchQuery;
+        private string _searchResultRaw;
+        private string _status;
+
+        private ObservableCollection<JObject> _searchResults = new ObservableCollection<JObject>();
 
         public ObservableCollection<Index> Indexes
         {
             get { return _indexes; }
+        }
+
+        public ObservableCollection<JObject> SearchResults
+        {
+            get { return _searchResults; }
+            set { _searchResults = value; }
         }
 
         public async void Connect()
@@ -97,7 +123,7 @@ namespace AzureSearchTool
                 //{'@odata.context': 'https://maxmelcher.search.windows.net/$metadata#indexes','value':''}
                 var dummy = new
                 {
-                    value = new Index[] { }
+                    value = new Index[] {}
                 };
 
                 var result = JsonConvert.DeserializeAnonymousType(jsonIndexes, dummy);
@@ -120,7 +146,11 @@ namespace AzureSearchTool
         public string Error
         {
             get { return _error; }
-            set { _error = value; OnPropertyChanged("Error"); }
+            set
+            {
+                _error = value;
+                OnPropertyChanged("Error");
+            }
         }
 
         private WebClient GetWebClient()
@@ -139,11 +169,85 @@ namespace AzureSearchTool
 
 
         public event PropertyChangedEventHandler PropertyChanged;
+
         private void OnPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
             {
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
+
+        public string SearchResultRaw
+        {
+            get { return _searchResultRaw; }
+            set
+            {
+                _searchResultRaw = value;
+                OnPropertyChanged("SearchResultRaw");
+            }
+        }
+
+        public string Status
+        {
+            get { return _status; }
+            set
+            {
+                _status = value;
+                OnPropertyChanged("Status");
+            }
+        }
+
+        public async void Search()
+        {
+            try
+            {
+                if (string.IsNullOrEmpty(SearchQuery))
+                {
+                    Error = "No Search Query provided";
+                    Status = "No Search Query provided";
+                    return;
+                }
+                var client = GetWebClient();
+                var watch = new Stopwatch();
+                watch.Start();
+
+
+                SearchResultRaw = await client.DownloadStringTaskAsync(new Uri(Url));
+                /*
+                 {
+                    "@odata.context": "https://maxmelcher.search.windows.net/indexes('twittersearch')/$metadata#docs(Text,Mention,Created,Url,StatusId,Sentiment,Score)",
+                    "@odata.count": 31,
+                    "value": [
+                        {
+                            "@search.score": 0.094358146,
+                            "Text": "RT @ynfa_thehub: #FIFA http://t.co/oi7ugyAhfz",
+                            "Mention": "@ynfa_thehub",
+                            "Created": null,
+                            "Url": "https://twitter.com/Locket25/status/604595408925507585",
+                            "StatusId": "604595408925507585",
+                            "Sentiment": "good",
+                            "Score": 0.7330736
+                        }, ... 
+                 }
+                 * */
+
+                SearchResults.Clear();
+
+                dynamic results = JsonConvert.DeserializeObject<dynamic>(SearchResultRaw);
+
+                foreach (var val in results.value)
+                {
+                    //todo build proper objects
+                    SearchResults.Add(val);
+                }
+
+                watch.Stop();
+                Status = string.Format("Search Query executed in {0}ms", watch.ElapsedMilliseconds);
+            }
+            catch (Exception ex)
+            {
+                Error = ex.Message;
             }
         }
     }

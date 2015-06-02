@@ -142,10 +142,21 @@
         <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Url}"></TextBox>
 
         <TabControl Grid.Row="2" Grid.Column="1">
-            <TabItem Header="Search"></TabItem>
+            <TabItem Header="Index">
+                <Label Content="Index Overview"></Label>
+            </TabItem>
+            <TabItem Header="Search">
+                <DataGrid ItemsSource="{Binding SearchResults}">
+                    
+                </DataGrid>
+            </TabItem>
             <TabItem Header="Suggestion"></TabItem>
             <TabItem Header="Facets"></TabItem>
-            <TabItem Header="Raw"></TabItem>
+            <TabItem Header="Raw">
+                <ScrollViewer>
+                    <TextBox Text="{Binding SearchResultRaw}" IsReadOnly="True" IsReadOnlyCaretVisible="False" TextWrapping="Wrap"></TextBox>
+                </ScrollViewer>
+            </TabItem>
             <TabItem Header="Test Data"></TabItem>
         </TabControl>
         <GroupBox Header="Query" HorizontalAlignment="Left" Margin="10,22,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" Height="80" Width="280">
@@ -157,8 +168,8 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"></RowDefinition>
                 </Grid.RowDefinitions>
-                <TextBox Grid.Row="0">Query 123555</TextBox>
-                <Button Grid.Row="0" Grid.Column="1" Content="Search" Width="50" Height="25"></Button>
+                <TextBox Grid.Row="0" Text="{Binding SearchQuery}"></TextBox>
+                <Button Grid.Row="0" Grid.Column="1" Content="Search" Width="50" Height="25" Click="Search"></Button>
             </Grid>
         </GroupBox>
         <GroupBox Header="Query Options" HorizontalAlignment="Left" Margin="10,126,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" Height="543" Width="280">
@@ -244,8 +255,8 @@
         </GroupBox>
 
         <StatusBar Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
-            <TextBox Width="300" Text="Query completed in 127ms"></TextBox>
-            <Controls:MetroProgressBar Height="25" IsIndeterminate="True" Foreground="White" Width="500" />
+            <TextBox Width="300" Text="{Binding Status}"></TextBox>
+            <Controls:MetroProgressBar Height="25" IsIndeterminate="True" Foreground="White" Width="500" Name="ProgressBar" />
         </StatusBar>
     </Grid>
 </Controls:MetroWindow>
