@@ -1,9 +1,11 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Dynamic;
+using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
@@ -94,14 +96,14 @@ namespace AzureSearchTool
         private string _searchResultRaw;
         private string _status;
 
-        private ObservableCollection<JObject> _searchResults = new ObservableCollection<JObject>();
+        private DynamicItemCollection<JObject> _searchResults = new DynamicItemCollection<JObject>();
 
         public ObservableCollection<Index> Indexes
         {
             get { return _indexes; }
         }
 
-        public ObservableCollection<JObject> SearchResults
+        public DynamicItemCollection<JObject> SearchResults
         {
             get { return _searchResults; }
             set { _searchResults = value; }
@@ -234,21 +236,47 @@ namespace AzureSearchTool
 
                 SearchResults.Clear();
 
-                dynamic results = JsonConvert.DeserializeObject<dynamic>(SearchResultRaw);
+                dynamic results =  JObject.Parse(SearchResultRaw);
 
                 foreach (var val in results.value)
                 {
-                    //todo build proper objects
                     SearchResults.Add(val);
                 }
 
                 watch.Stop();
                 Status = string.Format("Search Query executed in {0}ms", watch.ElapsedMilliseconds);
+      
             }
             catch (Exception ex)
             {
                 Error = ex.Message;
             }
+        }
+    }
+
+    public class SearchResult<T> : ObservableCollection<T>, IList, ITypedList
+        where T : DynamicItem
+    {
+        public string GetListName(PropertyDescriptor[] listAccessors)
+        {
+            return null;
+        }
+
+        public PropertyDescriptorCollection GetItemProperties(PropertyDescriptor[] listAccessors)
+        {
+            var dynamicDescriptors = new PropertyDescriptor[0];
+            if (this.Any())
+            {
+                var firstItem = this[0];
+
+                dynamicDescriptors =
+                    firstItem.GetDynamicMemberNames()
+                        .Select(p => new DynamicPropertyDescriptor(p))
+                        .Cast<PropertyDescriptor>()
+                        .ToArray();
+            }
+            return new PropertyDescriptorCollection(dynamicDescriptors);
+
         }
     }
 }

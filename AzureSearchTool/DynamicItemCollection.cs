@@ -1,13 +1,13 @@
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Dynamic;
 using System.Linq;
+using Newtonsoft.Json.Linq;
 
 namespace AzureSearchTool
 {
     public class DynamicItemCollection<T> : ObservableCollection<T>, IList, ITypedList
-        where T : DynamicObject
+        where T : JObject
     {
         public string GetListName(PropertyDescriptor[] listAccessors)
         {
@@ -19,11 +19,11 @@ namespace AzureSearchTool
             var dynamicDescriptors = new PropertyDescriptor[0];
             if (this.Any())
             {
-                var firstItem = this[0];
+                JObject firstItem = this[0];
 
                 dynamicDescriptors =
-                    firstItem.GetDynamicMemberNames()
-                        .Select(p => new DynamicPropertyDescriptor(p))
+                    firstItem.Properties()
+                        .Select(p => new DynamicPropertyDescriptor(p.Name))
                         .Cast<PropertyDescriptor>()
                         .ToArray();
             }

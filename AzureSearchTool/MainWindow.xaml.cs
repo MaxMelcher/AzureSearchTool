@@ -75,7 +75,13 @@ namespace AzureSearchTool
             try
             {
                 ProgressBar.IsIndeterminate = true;
+          
                 Model.Search();
+
+                //reset the itemsource to force a rebind
+                var temp = GridSearchResults.ItemsSource;
+                GridSearchResults.ItemsSource = null;
+                GridSearchResults.ItemsSource = temp;
             }
             catch(Exception ex)
             {

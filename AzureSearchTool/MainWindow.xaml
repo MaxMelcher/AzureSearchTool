@@ -146,7 +146,7 @@
                 <Label Content="Index Overview"></Label>
             </TabItem>
             <TabItem Header="Search">
-                <DataGrid ItemsSource="{Binding SearchResults}">
+                <DataGrid ItemsSource="{Binding SearchResults}" Name="GridSearchResults">
                     
                 </DataGrid>
             </TabItem>
@@ -256,7 +256,7 @@
 
         <StatusBar Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">
             <TextBox Width="300" Text="{Binding Status}"></TextBox>
-            <Controls:MetroProgressBar Height="25" IsIndeterminate="True" Foreground="White" Width="500" Name="ProgressBar" />
+            <Controls:MetroProgressBar Height="25" IsIndeterminate="False" Foreground="White" Width="500" Name="ProgressBar" />
         </StatusBar>
     </Grid>
 </Controls:MetroWindow>
