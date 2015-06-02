@@ -245,7 +245,8 @@ namespace AzureSearchTool
 
                 watch.Stop();
                 Status = string.Format("Search Query executed in {0}ms", watch.ElapsedMilliseconds);
-      
+                Error = "";
+
             }
             catch (Exception ex)
             {
