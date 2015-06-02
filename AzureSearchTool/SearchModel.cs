@@ -1,13 +1,15 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Net;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Serialization;
 
 namespace AzureSearchTool
 {
-    public class SearchModel
+    public class SearchModel : INotifyPropertyChanged
     {
         private string _service = "MaxMelcher";
         private string _apiKey = "B98A05BCCACF2A0BA020FE6299CD4AA1";
@@ -28,8 +30,33 @@ namespace AzureSearchTool
         }
 
         public string Filter { get; set; }
-        public string Url { get; set; }
-        public Index Index { get; set; }
+
+        public string Url
+        {
+            //https://maxmelcher.search.windows.net/indexes/twittersearch/docs?search=fifa&api-version=2015-02-28&$filter=Score gt 0.5&$top=25&$count=true
+            get
+            {
+                if (Index == null)
+                {
+                    return "Index not valid";
+                }
+                return string.Format("https://{0}.{1}/indexes/{2}/docs?search={3}&api-version={4}", Service, BaseUrl, Index.Name, Search, ApiVersion);
+            }
+            set { _url = value; OnPropertyChanged("Url"); }
+        }
+
+        public string Search
+        {
+            get { return _search; }
+            set { _search = value; OnPropertyChanged("Url"); }
+        }
+
+
+        public Index Index
+        {
+            get { return _index; }
+            set { _index = value; OnPropertyChanged("Index"); OnPropertyChanged("Url"); }
+        }
 
         public string ApiVersion
         {
@@ -44,6 +71,11 @@ namespace AzureSearchTool
         };
 
         private ObservableCollection<Index> _indexes = new ObservableCollection<Index>();
+        private string _error;
+        private Index _index;
+        private string _url;
+        private string _search;
+
         public ObservableCollection<Index> Indexes
         {
             get { return _indexes; }
@@ -57,21 +89,38 @@ namespace AzureSearchTool
 
             WebClient client = GetWebClient();
 
-            var jsonIndexes = await client.DownloadStringTaskAsync(new Uri(indexUrl));
 
-            //{'@odata.context': 'https://maxmelcher.search.windows.net/$metadata#indexes','value':''}
-            var dummy = new
+            try
             {
-                value = new Index[] { }
-            };
-            
-            var result = JsonConvert.DeserializeAnonymousType(jsonIndexes, dummy);
-            Indexes.Clear();
+                var jsonIndexes = await client.DownloadStringTaskAsync(new Uri(indexUrl));
 
-            foreach (Index index in result.value)
-            {
-                Indexes.Add(index);    
+                //{'@odata.context': 'https://maxmelcher.search.windows.net/$metadata#indexes','value':''}
+                var dummy = new
+                {
+                    value = new Index[] { }
+                };
+
+                var result = JsonConvert.DeserializeAnonymousType(jsonIndexes, dummy);
+                Indexes.Clear();
+
+                foreach (Index index in result.value)
+                {
+                    Indexes.Add(index);
+                }
+                Error = "";
             }
+            catch (Exception ex)
+            {
+                Error = ex.Message;
+                Indexes.Clear();
+                Index = null;
+            }
+        }
+
+        public string Error
+        {
+            get { return _error; }
+            set { _error = value; OnPropertyChanged("Error"); }
         }
 
         private WebClient GetWebClient()
@@ -86,36 +135,16 @@ namespace AzureSearchTool
         {
             Index = index;
         }
-    }
 
-    public class Index
-    {
-        public string Name { get; set; }
-        public List<Field> Fields { get; set; }
-        
-        //todo implement scoring profile
-        //public List<string> ScoringProfiles { get; set; }
 
-        //todo implement DefaultScoringProfile
-        //public string DefaultScoringProfile { get; set; }
-        
-        //todo implement CorsOptions
-        //public string CorsOptions { get; set; }
 
-        //todo implement suggesters
-        //public string Suggesters { get; set; }
-    }
-
-    public class Field
-    {
-        public string Name { get; set; }
-        public string Type { get; set; }
-        public bool Searchable { get; set; }
-        public bool Filterable { get; set; }
-        public bool Retrievable { get; set; }
-        public bool Sortable { get; set; }
-        public bool Facetable { get; set; }
-        public bool Key { get; set; }
-        public string Analyzer { get; set; }
+        public event PropertyChangedEventHandler PropertyChanged;
+        private void OnPropertyChanged(string propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
     }
 }

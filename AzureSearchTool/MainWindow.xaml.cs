@@ -58,7 +58,7 @@ namespace AzureSearchTool
 
         private async void Connect(object sender, RoutedEventArgs e)
         {
-            Model.Connect();
+             Model.Connect();
         }
 
         private void SelectIndex(object sender, RoutedEventArgs e)
