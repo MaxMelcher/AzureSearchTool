@@ -23,6 +23,7 @@ namespace AzureSearchTool
         public About()
         {
             InitializeComponent();
+            this.DataContext = this;
         }
 
         public string Version
