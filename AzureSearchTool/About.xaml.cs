@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Reflection;
 
 namespace AzureSearchTool
 {
@@ -22,6 +23,14 @@ namespace AzureSearchTool
         public About()
         {
             InitializeComponent();
+        }
+
+        public string Version
+        {
+            get
+            {
+                return Assembly.GetExecutingAssembly().GetName().Version.ToString();
+            }
         }
     }
 }

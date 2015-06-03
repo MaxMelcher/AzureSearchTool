@@ -106,7 +106,8 @@ namespace AzureSearchTool
 
         private void MenuItem_About_OnClick(object sender, RoutedEventArgs e)
         {
-
+            About about = new About();
+            about.ShowDialog();
         }
     }
 }
