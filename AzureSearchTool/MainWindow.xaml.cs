@@ -37,7 +37,6 @@ namespace AzureSearchTool
             Grid.DataContext = Model;
             Flyout.DataContext = Model;
 
-            Model.Url = "https://maxmelcher.search.windows.net/indexes/twittersearch/docs?search=fifa&api-version=2015-02-28&$filter=Score gt 0.5&$top=25&$count=true";
             OpenConnectionFlyout();
         }
 
@@ -69,19 +68,17 @@ namespace AzureSearchTool
             Flyout.IsOpen = false;
         }
 
-        private async void Search(object sender, RoutedEventArgs e)
+        private void Search(object sender, RoutedEventArgs e)
         {
-
             try
             {
                 ProgressBar.IsIndeterminate = true;
-          
+                GridSearchResults.AutoGenerateColumns = false;
+                GridSearchResults.Columns.Clear();
                 Model.Search();
-
-                //reset the itemsource to force a rebind
-                var temp = GridSearchResults.ItemsSource;
-                GridSearchResults.ItemsSource = null;
-                GridSearchResults.ItemsSource = temp;
+                GridSearchResults.AutoGenerateColumns = true;
+                
+                
             }
             catch(Exception ex)
             {
@@ -92,6 +89,24 @@ namespace AzureSearchTool
             {
                 ProgressBar.IsIndeterminate = false;
             }
+        }
+
+        private void Searchbox_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Return)
+            {
+                Model.Search();
+            }
+        }
+
+        private void FilterExample(object sender, RoutedEventArgs e)
+        {
+            Model.Filter = "Score gt 0.5";
+        }
+
+        private void MenuItem_About_OnClick(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

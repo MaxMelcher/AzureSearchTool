@@ -93,6 +93,9 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="About.xaml.cs">
+      <DependentUpon>About.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DynamicItem.cs" />
     <Compile Include="DynamicItemCollection.cs" />
     <Compile Include="DynamicPropertyDescriptor.cs" />
@@ -100,6 +103,10 @@
     <Compile Include="HideIfEmptyConverter.cs" />
     <Compile Include="Index.cs" />
     <Compile Include="SearchModel.cs" />
+    <Page Include="About.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>

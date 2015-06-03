@@ -133,31 +133,54 @@
                 <MenuItem Header="_Status" />
             </MenuItem>
             <MenuItem Header="_Help">
-                <MenuItem Header="_About" />
+                <MenuItem Header="_About" Click="MenuItem_About_OnClick" />
             </MenuItem>
         </Menu>
 
 
 
-        <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Url}"></TextBox>
+        <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Url, Mode=OneWay}"></TextBox>
 
         <TabControl Grid.Row="2" Grid.Column="1">
             <TabItem Header="Index">
-                <Label Content="Index Overview"></Label>
+                <StackPanel>
+                    <Label Content="Index Overview"></Label>
+                    <TextBlock><Run>Todo: Create Index Overview with all fields &amp; types and Index Statistics here.</Run><LineBreak/>
+                    <Run>Todo: Maybe allow addition of Fields?</Run>
+                    </TextBlock>
+                </StackPanel>
             </TabItem>
             <TabItem Header="Search">
-                <DataGrid ItemsSource="{Binding SearchResults}" Name="GridSearchResults">
-                    
+                <DataGrid ItemsSource="{Binding SearchResults}" Name="GridSearchResults" AutoGenerateColumns="False">
+
                 </DataGrid>
             </TabItem>
-            <TabItem Header="Suggestion"></TabItem>
-            <TabItem Header="Facets"></TabItem>
+            <TabItem Header="Suggestion">
+                <StackPanel>
+                    <Label Content="Suggestions"></Label>
+                    <TextBlock><Run>Todo: Show the suggestions here, I think we need a seperate search mode for that on the left.</Run><LineBreak/>
+                    </TextBlock>
+                </StackPanel>
+            </TabItem>
+            <TabItem Header="Facets">
+                <StackPanel>
+                    <Label Content="Facets"></Label>
+                    <TextBlock><Run>Todo: Show the available facets here.</Run><LineBreak/>
+                    </TextBlock>
+                </StackPanel>
+            </TabItem>
             <TabItem Header="Raw">
                 <ScrollViewer>
                     <TextBox Text="{Binding SearchResultRaw}" IsReadOnly="True" IsReadOnlyCaretVisible="False" TextWrapping="Wrap"></TextBox>
                 </ScrollViewer>
             </TabItem>
-            <TabItem Header="Test Data"></TabItem>
+            <TabItem Header="Test Data">
+                <StackPanel>
+                    <Label Content="Facets"></Label>
+                    <TextBlock><Run>Todo: Easy upload of test data in an excel style grid</Run><LineBreak/>
+                    </TextBlock>
+                </StackPanel>
+            </TabItem>
         </TabControl>
         <GroupBox Header="Query" HorizontalAlignment="Left" Margin="10,22,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" Height="80" Width="280">
             <Grid>
@@ -168,12 +191,12 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="30"></RowDefinition>
                 </Grid.RowDefinitions>
-                <TextBox Grid.Row="0" Text="{Binding SearchQuery}"></TextBox>
+                <TextBox Grid.Row="0" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" KeyUp="Searchbox_KeyUp"></TextBox>
                 <Button Grid.Row="0" Grid.Column="1" Content="Search" Width="50" Height="25" Click="Search"></Button>
             </Grid>
         </GroupBox>
-        <GroupBox Header="Query Options" HorizontalAlignment="Left" Margin="10,126,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" Height="543" Width="280">
-            <ScrollViewer>
+        <GroupBox Header="Query Options" HorizontalAlignment="Left" Margin="10,157,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" Height="517" Width="280">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto">
                 <Grid>
 
                     <Grid.ColumnDefinitions>
@@ -200,8 +223,8 @@
                         <RowDefinition />
                     </Grid.RowDefinitions>
                     <Label Grid.Column="0" Grid.Row="0" Content="$filter"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="0">Sentiment -eq 123</TextBox>
-                    <Button  Grid.Column="2" Grid.Row="0" Width="20" Height="20" VerticalAlignment="Top" Style="{DynamicResource MetroCircleButtonStyle}" ToolTip="Paste example" HorizontalAlignment="Left" Margin="5 5 5 5" Visibility="Visible">
+                    <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" ToolTip="Enter a valid ODATA filter"></TextBox>
+                    <Button  Grid.Column="2" Grid.Row="0" Width="20" Height="20" VerticalAlignment="Top" Style="{DynamicResource MetroCircleButtonStyle}" ToolTip="Paste example" HorizontalAlignment="Left" Margin="5 5 5 5" Visibility="Visible" Click="FilterExample">
                         <Rectangle Width="10" Height="10">
                             <Rectangle.Fill>
                                 <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_clipboard_paste}" />
@@ -210,46 +233,46 @@
                     </Button>
 
                     <Label Grid.Column="0" Grid.Row="1" Content="$top"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="1">15</TextBox>
+                    <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Top, UpdateSourceTrigger=PropertyChanged}" ToolTip="Selects # results"></TextBox>
 
                     <Label Grid.Column="0" Grid.Row="2" Content="$skip"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="2">5</TextBox>
+                    <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Skip, UpdateSourceTrigger=PropertyChanged}" ToolTip="Skips # results"></TextBox>
 
                     <Label Grid.Column="0" Grid.Row="3" Content="searchMode"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="3" Text="Any"></TextBox>
+                    <TextBox Grid.Column="1" Grid.Row="3" Text="Any" IsEnabled="False"></TextBox>
 
                     <Label Grid.Column="0" Grid.Row="4" Content="searchFields"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="4" Text="Title"></TextBox>
+                    <TextBox Grid.Column="1" Grid.Row="4" Text="Title" IsEnabled="False"></TextBox>
 
                     <Label Grid.Column="0" Grid.Row="5" Content="count"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="5" Text="true"></TextBox>
+                    <TextBox Grid.Column="1" Grid.Row="5" Text="true" IsEnabled="False"></TextBox>
 
                     <Label Grid.Column="0" Grid.Row="6" Content="orderby"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="6"></TextBox>
+                    <TextBox Grid.Column="1" Grid.Row="6" IsEnabled="False"></TextBox>
 
                     <Label Grid.Column="0" Grid.Row="7" Content="select"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="7"></TextBox>
+                    <TextBox Grid.Column="1" Grid.Row="7" IsEnabled="False"></TextBox>
 
                     <Label Grid.Column="0" Grid.Row="8" Content="facet"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="8"></TextBox>
+                    <TextBox Grid.Column="1" Grid.Row="8" IsEnabled="False"></TextBox>
 
                     <Label Grid.Column="0" Grid.Row="9" Content="highlight"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="9"></TextBox>
+                    <TextBox Grid.Column="1" Grid.Row="9" IsEnabled="False"></TextBox>
 
                     <Label Grid.Column="0" Grid.Row="10" Content="highlightPreTag"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="10"></TextBox>
+                    <TextBox Grid.Column="1" Grid.Row="10" IsEnabled="False"></TextBox>
 
                     <Label Grid.Column="0" Grid.Row="11" Content="highlightPostTag"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="11"></TextBox>
+                    <TextBox Grid.Column="1" Grid.Row="11" IsEnabled="False"></TextBox>
 
                     <Label Grid.Column="0" Grid.Row="12" Content="scoringProfile"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="12"></TextBox>
+                    <TextBox Grid.Column="1" Grid.Row="12" IsEnabled="False"></TextBox>
 
                     <Label Grid.Column="0" Grid.Row="13" Content="scoringParameter"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="13"></TextBox>
+                    <TextBox Grid.Column="1" Grid.Row="13" IsEnabled="False"></TextBox>
 
                     <Label Grid.Column="0" Grid.Row="14" Content="api-version"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="14" Text="{Binding ApiVersion}"></TextBox>
+                    <TextBox Grid.Column="1" Grid.Row="14" Text="{Binding ApiVersion, UpdateSourceTrigger=PropertyChanged}" ToolTip="Selects the API-Version (this will be a dropdown soon)"></TextBox>
                 </Grid>
             </ScrollViewer>
         </GroupBox>
@@ -258,5 +281,6 @@
             <TextBox Width="300" Text="{Binding Status}"></TextBox>
             <Controls:MetroProgressBar Height="25" IsIndeterminate="False" Foreground="White" Width="500" Name="ProgressBar" />
         </StatusBar>
+        <TextBlock HorizontalAlignment="Left" Margin="10,107,0,0" Grid.Row="2" TextWrapping="Wrap" VerticalAlignment="Top" Height="45" Width="280" Text="{Binding Error}" Foreground="Red"/>
     </Grid>
 </Controls:MetroWindow>

@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json.Serialization;
+using System.Data;
 
 namespace AzureSearchTool
 {
@@ -31,10 +32,27 @@ namespace AzureSearchTool
         public string ApiKey
         {
             get { return _apiKey; }
-            set { _apiKey = value; }
+            set
+            {
+                _apiKey = value; OnPropertyChanged("ApiKey");
+                OnPropertyChanged("Url");
+            }
         }
 
-        public string Filter { get; set; }
+        private string _filter = "";
+        public string Filter
+        {
+            get
+            {
+                return _filter;
+            }
+            set
+            {
+                _filter = value;
+                OnPropertyChanged("Filter");
+                OnPropertyChanged("Url");
+            }
+        }
 
         public string Url
         {
@@ -45,12 +63,25 @@ namespace AzureSearchTool
                 {
                     return "Index not valid";
                 }
-                return string.Format("https://{0}.{1}/indexes/{2}/docs?search={3}&api-version={4}", Service, BaseUrl, Index.Name, SearchQuery, ApiVersion);
-            }
-            set
-            {
-                _url = value;
-                OnPropertyChanged("Url");
+
+                var url = string.Format("https://{0}.{1}/indexes/{2}/docs?search={3}&api-version={4}", Service, BaseUrl, Index.Name, SearchQuery, ApiVersion);
+
+                if (!string.IsNullOrEmpty(Top))
+                {
+                    url += string.Format("&$top={0}", Top);
+                }
+
+                if (!string.IsNullOrEmpty(Skip))
+                {
+                    url += string.Format("&$skip={0}", Skip);
+                }
+
+                if (!string.IsNullOrEmpty(Filter))
+                {
+                    url += string.Format("&$filter={0}", Filter);
+                }
+
+                return url;
             }
         }
 
@@ -79,7 +110,40 @@ namespace AzureSearchTool
         public string ApiVersion
         {
             get { return _apiVersion; }
-            set { _apiVersion = value; }
+            set { _apiVersion = value;
+            OnPropertyChanged("ApiVersion");
+            OnPropertyChanged("Url");
+            }
+        }
+
+        private string _top = "";
+        public string Top
+        {
+            get
+            {
+                return _top;
+            }
+            set
+            {
+                _top = value;
+                OnPropertyChanged("Top");
+                OnPropertyChanged("Url");
+            }
+        }
+
+        private string _skip = "";
+        public string Skip
+        {
+            get
+            {
+                return _skip;
+            }
+            set
+            {
+                _skip = value;
+                OnPropertyChanged("Skip");
+                OnPropertyChanged("Url");
+            }
         }
 
         //todo create a dropdown for this
@@ -96,14 +160,15 @@ namespace AzureSearchTool
         private string _searchResultRaw;
         private string _status;
 
-        private DynamicItemCollection<JObject> _searchResults = new DynamicItemCollection<JObject>();
+
 
         public ObservableCollection<Index> Indexes
         {
             get { return _indexes; }
         }
 
-        public DynamicItemCollection<JObject> SearchResults
+        private DataTable _searchResults = new DataTable();
+        public DataTable SearchResults
         {
             get { return _searchResults; }
             set { _searchResults = value; }
@@ -125,7 +190,7 @@ namespace AzureSearchTool
                 //{'@odata.context': 'https://maxmelcher.search.windows.net/$metadata#indexes','value':''}
                 var dummy = new
                 {
-                    value = new Index[] {}
+                    value = new Index[] { }
                 };
 
                 var result = JsonConvert.DeserializeAnonymousType(jsonIndexes, dummy);
@@ -200,7 +265,7 @@ namespace AzureSearchTool
             }
         }
 
-        public async void Search()
+        public void Search()
         {
             try
             {
@@ -210,12 +275,16 @@ namespace AzureSearchTool
                     Status = "No Search Query provided";
                     return;
                 }
+
+                //clear the datatable and reset the columns
+                SearchResults.Clear();
+                SearchResults.Columns.Clear();
+
                 var client = GetWebClient();
                 var watch = new Stopwatch();
                 watch.Start();
-
-
-                SearchResultRaw = await client.DownloadStringTaskAsync(new Uri(Url));
+                SearchResultRaw = client.DownloadString(new Uri(Url));
+                watch.Stop();
                 /*
                  {
                     "@odata.context": "https://maxmelcher.search.windows.net/indexes('twittersearch')/$metadata#docs(Text,Mention,Created,Url,StatusId,Sentiment,Score)",
@@ -234,19 +303,38 @@ namespace AzureSearchTool
                  }
                  * */
 
-                SearchResults.Clear();
+                dynamic results = JObject.Parse(SearchResultRaw);
 
-                dynamic results =  JObject.Parse(SearchResultRaw);
+                //pretty print it
+                SearchResultRaw = JsonConvert.SerializeObject(results, Newtonsoft.Json.Formatting.Indented);
 
-                foreach (var val in results.value)
+                if (results.value.Count > 0)
                 {
-                    SearchResults.Add(val);
+                    //create the columns
+                    foreach (var col in results.value.First)
+                    {
+                        SearchResults.Columns.Add(col.Name);
+                    }
+
+                    //Todo: Mabye do more advanced column handling here, I am thinking of geolocation
+                    //create the values for the table
+                    foreach (var elem in results.value)
+                    {
+                        var row = SearchResults.Rows.Add();
+                        foreach (var col in elem)
+                        {
+                            row[col.Name] = col.Value;
+                        }
+                    }
+                    
+                    Status = string.Format("Search Query executed in {0}ms", watch.ElapsedMilliseconds);
+                    Error = "";
                 }
-
-                watch.Stop();
-                Status = string.Format("Search Query executed in {0}ms", watch.ElapsedMilliseconds);
-                Error = "";
-
+                else
+                {
+                    Status = string.Format("0 results - Search Query executed in {0}ms", watch.ElapsedMilliseconds);
+                    Error = "";
+                }
             }
             catch (Exception ex)
             {
@@ -255,29 +343,5 @@ namespace AzureSearchTool
         }
     }
 
-    public class SearchResult<T> : ObservableCollection<T>, IList, ITypedList
-        where T : DynamicItem
-    {
-        public string GetListName(PropertyDescriptor[] listAccessors)
-        {
-            return null;
-        }
 
-        public PropertyDescriptorCollection GetItemProperties(PropertyDescriptor[] listAccessors)
-        {
-            var dynamicDescriptors = new PropertyDescriptor[0];
-            if (this.Any())
-            {
-                var firstItem = this[0];
-
-                dynamicDescriptors =
-                    firstItem.GetDynamicMemberNames()
-                        .Select(p => new DynamicPropertyDescriptor(p))
-                        .Cast<PropertyDescriptor>()
-                        .ToArray();
-            }
-            return new PropertyDescriptorCollection(dynamicDescriptors);
-
-        }
-    }
 }
