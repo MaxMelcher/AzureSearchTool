@@ -5,6 +5,10 @@
                       xmlns:azureSearchTool="clr-namespace:AzureSearchTool"
                       BorderBrush="Black" Icon="/Images/AzureSearch_Logo.ico">
 
+    <Window.DataContext>
+        <azureSearchTool:SearchModel></azureSearchTool:SearchModel>
+    </Window.DataContext>
+
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -142,6 +146,12 @@
         <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Url, Mode=OneWay}"></TextBox>
 
         <TabControl Grid.Row="2" Grid.Column="1">
+
+            <TabItem Header="Search">
+                <DataGrid ItemsSource="{Binding SearchResults}"  Name="GridSearchResults" AutoGenerateColumns="False">
+                </DataGrid>
+            </TabItem>
+
             <TabItem Header="Index">
                 <StackPanel>
                     <Label Content="Index Overview"></Label>
@@ -150,11 +160,7 @@
                     </TextBlock>
                 </StackPanel>
             </TabItem>
-            <TabItem Header="Search">
-                <DataGrid ItemsSource="{Binding SearchResults}" Name="GridSearchResults" AutoGenerateColumns="False">
 
-                </DataGrid>
-            </TabItem>
             <TabItem Header="Suggestion">
                 <StackPanel>
                     <Label Content="Suggestions"></Label>
@@ -196,85 +202,83 @@
             </Grid>
         </GroupBox>
         <GroupBox Header="Query Options" HorizontalAlignment="Left" Margin="10,157,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" Height="517" Width="280">
-            <ScrollViewer HorizontalScrollBarVisibility="Auto">
-                <Grid>
+            <Grid>
 
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="100"/>
-                        <ColumnDefinition Width="30"/>
-                    </Grid.ColumnDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="111"/>
+                    <ColumnDefinition Width="133"/>
+                    <ColumnDefinition Width="24"/>
+                </Grid.ColumnDefinitions>
 
-                    <Grid.RowDefinitions>
-                        <RowDefinition />
-                        <RowDefinition />
-                        <RowDefinition />
-                        <RowDefinition />
-                        <RowDefinition />
-                        <RowDefinition />
-                        <RowDefinition />
-                        <RowDefinition />
-                        <RowDefinition />
-                        <RowDefinition />
-                        <RowDefinition />
-                        <RowDefinition />
-                        <RowDefinition />
-                        <RowDefinition />
-                        <RowDefinition />
-                    </Grid.RowDefinitions>
-                    <Label Grid.Column="0" Grid.Row="0" Content="$filter"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" ToolTip="Enter a valid ODATA filter"></TextBox>
-                    <Button  Grid.Column="2" Grid.Row="0" Width="20" Height="20" VerticalAlignment="Top" Style="{DynamicResource MetroCircleButtonStyle}" ToolTip="Paste example" HorizontalAlignment="Left" Margin="5 5 5 5" Visibility="Visible" Click="FilterExample">
-                        <Rectangle Width="10" Height="10">
-                            <Rectangle.Fill>
-                                <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_clipboard_paste}" />
-                            </Rectangle.Fill>
-                        </Rectangle>
-                    </Button>
+                <Grid.RowDefinitions>
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                    <RowDefinition />
+                </Grid.RowDefinitions>
+                <Label Grid.Column="0" Grid.Row="0" Content="$filter"></Label>
+                <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. A structured search expression in standard OData syntax. See OData Expression Syntax for Azure Search for details on the subset of the OData expression grammar that Azure Search supports."></TextBox>
+                <Button  Grid.Column="2" Grid.Row="0" Width="20" Height="20" VerticalAlignment="Top" Style="{DynamicResource MetroCircleButtonStyle}" ToolTip="Paste example" HorizontalAlignment="Left" Margin="5,5,-1,0" Visibility="Visible" Click="FilterExample">
+                    <Rectangle Width="10" Height="10">
+                        <Rectangle.Fill>
+                            <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_clipboard_paste}" />
+                        </Rectangle.Fill>
+                    </Rectangle>
+                </Button>
 
-                    <Label Grid.Column="0" Grid.Row="1" Content="$top"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Top, UpdateSourceTrigger=PropertyChanged}" ToolTip="Selects # results"></TextBox>
+                <Label Grid.Column="0" Grid.Row="1" Content="$top"></Label>
+                <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Top, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. The number of search results to retrieve. This defaults to 50. If you specify a value greater than 1000 and there are more than 1000 results, only the first 1000 results will be returned, along with a link to the next page of results (see @odata.nextLink in the example below)."></TextBox>
 
-                    <Label Grid.Column="0" Grid.Row="2" Content="$skip"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Skip, UpdateSourceTrigger=PropertyChanged}" ToolTip="Skips # results"></TextBox>
+                <Label Grid.Column="0" Grid.Row="2" Content="$skip"></Label>
+                <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Skip, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. The number of search results to skip. This value cannot be greater than 100,000. If you need to scan documents in sequence, but cannot use $skip due to this limitation, consider using $orderby on a totally-ordered key and $filter with a range query instead."></TextBox>
 
-                    <Label Grid.Column="0" Grid.Row="3" Content="searchMode"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="3" Text="Any" IsEnabled="False"></TextBox>
+                <Label Grid.Column="0" Grid.Row="3" Content="searchMode"></Label>
+                <ComboBox Grid.Column="1" Grid.Row="3" ItemsSource="{Binding AvailableSearchModes, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SearchMode}" ToolTip="Optional. Defaults to any. Specifies whether any or all of the search terms must be matched in order to count the document as a match."></ComboBox>
 
-                    <Label Grid.Column="0" Grid.Row="4" Content="searchFields"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="4" Text="Title" IsEnabled="False"></TextBox>
+                <Label Grid.Column="0" Grid.Row="4" Content="searchFields"></Label>
+                <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding SearchFields, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. The list of comma-separated field names to search for the specified text. Target fields must be marked as searchable."></TextBox>
 
-                    <Label Grid.Column="0" Grid.Row="5" Content="count"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="5" Text="true" IsEnabled="False"></TextBox>
+                <Label Grid.Column="0" Grid.Row="5" Content="count"></Label>
+                <ComboBox Grid.Column="1" Grid.Row="5" Text="true" SelectedItem="{Binding Count, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding AvailableCountModes}" ToolTip="Optional. Defaults to false. Specifies whether to fetch the total count of results. Setting this value to true may have a performance impact. Note that the count returned is an approximation."></ComboBox>
 
-                    <Label Grid.Column="0" Grid.Row="6" Content="orderby"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="6" IsEnabled="False"></TextBox>
+                <Label Grid.Column="0" Grid.Row="6" Content="orderby"></Label>
+                <TextBox Grid.Column="1" Grid.Row="6" Text="{Binding Orderby, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. A list of comma-separated expressions to sort the results by. Each expression can be either a field name or a call to the geo.distance() function. Each expression can be followed by asc to indicate ascending, and desc to indicate descending. The default is ascending order. Ties will be broken by the match scores of documents. If no $orderby is specified, the default sort order is descending by document match score. There is a limit of 32 clauses for $orderby."></TextBox>
 
-                    <Label Grid.Column="0" Grid.Row="7" Content="select"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="7" IsEnabled="False"></TextBox>
+                <Label Grid.Column="0" Grid.Row="7" Content="select"></Label>
+                <TextBox Grid.Column="1" Grid.Row="7" Text="{Binding Select, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. A list of comma-separated fields to retrieve. If unspecified, all fields marked as retrievable in the schema are included. You can also explicitly request all fields by setting this parameter to *."></TextBox>
 
-                    <Label Grid.Column="0" Grid.Row="8" Content="facet"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="8" IsEnabled="False"></TextBox>
+                <Label Grid.Column="0" Grid.Row="8" Content="facet"></Label>
+                <TextBox Grid.Column="1" Grid.Row="8" Text="{Binding Facet, UpdateSourceTrigger=PropertyChanged}" ToolTip="Zero or more fields to facet by. Optionally, the string may contain parameters to customize the faceting, expressed as comma-separated name:value pairs. Valid parameters are: ..."></TextBox>
 
-                    <Label Grid.Column="0" Grid.Row="9" Content="highlight"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="9" IsEnabled="False"></TextBox>
+                <Label Grid.Column="0" Grid.Row="9" Content="highlight"></Label>
+                <TextBox Grid.Column="1" Grid.Row="9" Text="{Binding Highlight, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. A set of comma-separated field names used for hit highlights. Only searchable fields can be used for hit highlighting."></TextBox>
 
-                    <Label Grid.Column="0" Grid.Row="10" Content="highlightPreTag"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="10" IsEnabled="False"></TextBox>
+                <Label Grid.Column="0" Grid.Row="10" Content="highlightPreTag"></Label>
+                <TextBox Grid.Column="1" Grid.Row="10" Text="{Binding HighlightPreTag, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. Defaults to &lt;/em&gt;. A string tag that appends to hit highlights. Must be set with highlightPostTag. Reserved characters in URL must be percent-encoded (for example, %23 instead of #)."></TextBox>
 
-                    <Label Grid.Column="0" Grid.Row="11" Content="highlightPostTag"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="11" IsEnabled="False"></TextBox>
+                <Label Grid.Column="0" Grid.Row="11" Content="highlightPostTag"></Label>
+                <TextBox Grid.Column="1" Grid.Row="11" Text="{Binding HighlightPostTag, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. Defaults to $lt;/em&gt;. A string tag that appends to hit highlights. Must be set with highlightPreTag. Reserved characters in URL must be percent-encoded (for example, %23 instead of #)." ></TextBox>
 
-                    <Label Grid.Column="0" Grid.Row="12" Content="scoringProfile"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="12" IsEnabled="False"></TextBox>
+                <Label Grid.Column="0" Grid.Row="12" Content="scoringProfile"></Label>
+                <TextBox Grid.Column="1" Grid.Row="12" Text="{Binding ScoringProfile, UpdateSourceTrigger=PropertyChanged}"></TextBox>
 
-                    <Label Grid.Column="0" Grid.Row="13" Content="scoringParameter"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="13" IsEnabled="False"></TextBox>
+                <Label Grid.Column="0" Grid.Row="13" Content="scoringParameter"></Label>
+                <TextBox Grid.Column="1" Grid.Row="13" Text="{Binding ScoringParameter}" ></TextBox>
 
-                    <Label Grid.Column="0" Grid.Row="14" Content="api-version"></Label>
-                    <TextBox Grid.Column="1" Grid.Row="14" Text="{Binding ApiVersion, UpdateSourceTrigger=PropertyChanged}" ToolTip="Selects the API-Version (this will be a dropdown soon)"></TextBox>
-                </Grid>
-            </ScrollViewer>
+                <Label Grid.Column="0" Grid.Row="14" Content="api-version"></Label>
+                <ComboBox Grid.Column="1" Grid.Row="14" Text="{Binding ApiVersion, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding AvailableApiVersions}"  ToolTip="Selects the API-Version (this will be a dropdown soon)"></ComboBox>
+            </Grid>
         </GroupBox>
 
         <StatusBar Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2">

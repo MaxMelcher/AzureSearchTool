@@ -1,17 +1,15 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Data;
 using System.Diagnostics;
-using System.Dynamic;
-using System.Linq;
+using System.IO;
 using System.Net;
+using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using Newtonsoft.Json.Serialization;
-using System.Data;
 
 namespace AzureSearchTool
 {
@@ -81,6 +79,61 @@ namespace AzureSearchTool
                     url += string.Format("&$filter={0}", Filter);
                 }
 
+                if (!string.IsNullOrEmpty(SearchMode))
+                {
+                    url += string.Format("&searchMode={0}", SearchMode);
+                }
+
+                if (!string.IsNullOrEmpty(SearchFields))
+                {
+                    url += string.Format("&searchFields={0}", SearchFields);
+                }
+
+                if (!string.IsNullOrEmpty(Count))
+                {
+                    url += string.Format("&$count={0}", Count);
+                }
+
+                if (!string.IsNullOrEmpty(Orderby))
+                {
+                    url += string.Format("&$orderby={0}", Orderby);
+                }
+
+                if (!string.IsNullOrEmpty(Select))
+                {
+                    url += string.Format("&$select={0}", Select);
+                }
+
+                if (!string.IsNullOrEmpty(Facet))
+                {
+                    url += string.Format("&facet={0}", Facet);
+                }
+
+                if (!string.IsNullOrEmpty(Highlight))
+                {
+                    url += string.Format("&highlight={0}", Highlight);
+                }
+
+                if (!string.IsNullOrEmpty(HighlightPreTag))
+                {
+                    url += string.Format("&highlightPreTag={0}", HighlightPreTag);
+                }
+
+                if (!string.IsNullOrEmpty(HighlightPostTag))
+                {
+                    url += string.Format("&highlightPostTag={0}", HighlightPostTag);
+                }
+
+                if (!string.IsNullOrEmpty(ScoringProfile))
+                {
+                    url += string.Format("&scoringProfile={0}", ScoringProfile);
+                }
+
+                if (!string.IsNullOrEmpty(ScoringParameter))
+                {
+                    url += string.Format("&scoringParameter={0}", ScoringParameter);
+                }
+
                 return url;
             }
         }
@@ -110,9 +163,11 @@ namespace AzureSearchTool
         public string ApiVersion
         {
             get { return _apiVersion; }
-            set { _apiVersion = value;
-            OnPropertyChanged("ApiVersion");
-            OnPropertyChanged("Url");
+            set
+            {
+                _apiVersion = value;
+                OnPropertyChanged("ApiVersion");
+                OnPropertyChanged("Url");
             }
         }
 
@@ -146,11 +201,16 @@ namespace AzureSearchTool
             }
         }
 
-        //todo create a dropdown for this
-        public List<string> AvailableApiVersions = new List<string>()
+        public List<string> AvailableApiVersions
         {
-            "2014-07-31-Preview", "2014-10-20-Preview", "2015-02-28-Preview", "2015-02-28"
-        };
+            get
+            {
+                return new List<string>()
+                                        {
+                                        "2014-07-31-Preview", "2014-10-20-Preview", "2015-02-28-Preview", "2015-02-28"
+                                        };
+            }
+        }
 
         private ObservableCollection<Index> _indexes = new ObservableCollection<Index>();
         private string _error;
@@ -168,6 +228,18 @@ namespace AzureSearchTool
         }
 
         private DataTable _searchResults = new DataTable();
+        private string _searchMode;
+        private string _searchFields;
+        private string _count;
+        private string _orderby;
+        private string _select;
+        private string _facet;
+        private string _highlight;
+        private string _highlightPreTag;
+        private string _highlightPostTag;
+        private string _scoringProfile;
+        private string _scoringParameter;
+
         public DataTable SearchResults
         {
             get { return _searchResults; }
@@ -265,6 +337,151 @@ namespace AzureSearchTool
             }
         }
 
+        public string SearchMode
+        {
+            get { return _searchMode; }
+            set
+            {
+                _searchMode = value;
+                OnPropertyChanged("Skip");
+                OnPropertyChanged("Url");
+            }
+        }
+
+        public List<string> AvailableSearchModes
+        {
+            get
+            {
+                return
+                    new List<string>
+                    {
+                        "any", "all"
+                    };
+            }
+        }
+
+        public string SearchFields
+        {
+            get { return _searchFields; }
+            set
+            {
+                var tmp = value;
+                //no spaces allowed here
+                tmp = tmp.Replace(" ", "");
+                _searchFields = tmp;
+                OnPropertyChanged("Skip");
+                OnPropertyChanged("SearchFields");
+            }
+        }
+
+        public List<string> AvailableCountModes
+        {
+            get { return new List<string> { "true", "false" }; }
+        }
+
+        public string Count
+        {
+            get { return _count; }
+            set
+            {
+                _count = value;
+                OnPropertyChanged("Count");
+                OnPropertyChanged("Url");
+            }
+        }
+
+        public string Orderby
+        {
+            get { return _orderby; }
+            set
+            {
+                _orderby = value;
+                OnPropertyChanged("Orderby");
+                OnPropertyChanged("Url");
+            }
+        }
+
+        public string Select
+        {
+            get
+            {
+                return _select;
+
+            }
+            set
+            {
+                _select = value;
+                OnPropertyChanged("Select");
+                OnPropertyChanged("Url");
+            }
+        }
+
+        public string Facet
+        {
+            get { return _facet; }
+            set
+            {
+                _facet = value;
+                OnPropertyChanged("Facet");
+                OnPropertyChanged("Url");
+            }
+        }
+
+        public string Highlight
+        {
+            get { return _highlight; }
+            set
+            {
+                _highlight = value;
+                OnPropertyChanged("Highlight");
+                OnPropertyChanged("Url");
+            }
+        }
+
+        public string HighlightPreTag
+        {
+            get { return _highlightPreTag; }
+            set
+            {
+                _highlightPreTag = value;
+                OnPropertyChanged("HighlightPreTag");
+                OnPropertyChanged("Url");
+            }
+        }
+
+        public string HighlightPostTag
+        {
+            get { return _highlightPostTag; }
+            set
+            {
+                _highlightPostTag = value;
+                OnPropertyChanged("HighlightPostTag");
+                OnPropertyChanged("Url");
+            }
+        }
+
+        public string ScoringProfile
+        {
+            get { return _scoringProfile; }
+            set
+            {
+                _scoringProfile = value;
+                OnPropertyChanged("ScoringProfile");
+                OnPropertyChanged("Url");
+            }
+        }
+
+        public string ScoringParameter
+        {
+            get { return _scoringParameter; }
+            set
+            {
+                _scoringParameter = value;
+                OnPropertyChanged("ScoringParameter");
+                OnPropertyChanged("Url");
+            }
+        }
+
         public void Search()
         {
             try
@@ -286,27 +503,27 @@ namespace AzureSearchTool
                 SearchResultRaw = client.DownloadString(new Uri(Url));
                 watch.Stop();
                 /*
-                 {
-                    "@odata.context": "https://maxmelcher.search.windows.net/indexes('twittersearch')/$metadata#docs(Text,Mention,Created,Url,StatusId,Sentiment,Score)",
-                    "@odata.count": 31,
-                    "value": [
-                        {
-                            "@search.score": 0.094358146,
-                            "Text": "RT @ynfa_thehub: #FIFA http://t.co/oi7ugyAhfz",
-                            "Mention": "@ynfa_thehub",
-                            "Created": null,
-                            "Url": "https://twitter.com/Locket25/status/604595408925507585",
-                            "StatusId": "604595408925507585",
-                            "Sentiment": "good",
-                            "Score": 0.7330736
-                        }, ... 
-                 }
-                 * */
+             {
+                "@odata.context": "https://maxmelcher.search.windows.net/indexes('twittersearch')/$metadata#docs(Text,Mention,Created,Url,StatusId,Sentiment,Score)",
+                "@odata.count": 31,
+                "value": [
+                    {
+                        "@search.score": 0.094358146,
+                        "Text": "RT @ynfa_thehub: #FIFA http://t.co/oi7ugyAhfz",
+                        "Mention": "@ynfa_thehub",
+                        "Created": null,
+                        "Url": "https://twitter.com/Locket25/status/604595408925507585",
+                        "StatusId": "604595408925507585",
+                        "Sentiment": "good",
+                        "Score": 0.7330736
+                    }, ... 
+             }
+             * */
 
                 dynamic results = JObject.Parse(SearchResultRaw);
 
                 //pretty print it
-                SearchResultRaw = JsonConvert.SerializeObject(results, Newtonsoft.Json.Formatting.Indented);
+                SearchResultRaw = JsonConvert.SerializeObject(results, Formatting.Indented);
 
                 if (results.value.Count > 0)
                 {
@@ -326,7 +543,7 @@ namespace AzureSearchTool
                             row[col.Name] = col.Value;
                         }
                     }
-                    
+
                     Status = string.Format("Search Query executed in {0}ms", watch.ElapsedMilliseconds);
                     Error = "";
                 }
@@ -334,6 +551,31 @@ namespace AzureSearchTool
                 {
                     Status = string.Format("0 results - Search Query executed in {0}ms", watch.ElapsedMilliseconds);
                     Error = "";
+                }
+            }
+            catch (WebException ex) //handle the response errors, this gives nice insight what went wrong
+            {
+                if (ex.Response != null)
+                {
+                    var stream = ex.Response.GetResponseStream();
+                    if (stream != null)
+                    {
+                        using (var reader = new StreamReader(stream))
+                        {
+                            var tmp = reader.ReadToEnd();
+                            var json = JObject.Parse(tmp);
+
+                            var error = json["error"];
+                            if (error["message"].HasValues)
+                            {
+                                Error = string.Format("Error: {0}", error["message"].Value<string>());
+                            }
+                            if (error["code"].HasValues)
+                            {
+                                Error += string.Format("\r\nCode: {0}", error["code"].Value<string>());
+                            }
+                        }
+                    }
                 }
             }
             catch (Exception ex)

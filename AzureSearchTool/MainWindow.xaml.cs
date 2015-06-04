@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -34,6 +35,7 @@ namespace AzureSearchTool
         public MainWindow()
         {
             InitializeComponent();
+
             Grid.DataContext = Model;
             Flyout.DataContext = Model;
 
@@ -58,36 +60,37 @@ namespace AzureSearchTool
 
         private async void Connect(object sender, RoutedEventArgs e)
         {
-             Model.Connect();
+            Model.Connect();
         }
 
         private void SelectIndex(object sender, RoutedEventArgs e)
         {
-            Index index = (Index) GridAvailableIndexes.SelectedItem;
+            Index index = (Index)GridAvailableIndexes.SelectedItem;
             Model.SelectIndex(index);
             Flyout.IsOpen = false;
         }
 
-        private void Search(object sender, RoutedEventArgs e)
+        private async void Search(object sender, RoutedEventArgs e)
         {
             try
             {
+                //set the progressbar
                 ProgressBar.IsIndeterminate = true;
+
                 GridSearchResults.AutoGenerateColumns = false;
                 GridSearchResults.Columns.Clear();
+
+                //todo make this async
                 Model.Search();
                 GridSearchResults.AutoGenerateColumns = true;
-                
-                
+                ProgressBar.IsIndeterminate = false;
+
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 //todo handle this
-                throw ex;
-            }
-            finally
-            {
                 ProgressBar.IsIndeterminate = false;
+                throw ex;
             }
         }
 
