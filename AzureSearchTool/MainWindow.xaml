@@ -148,7 +148,7 @@
         <TabControl Grid.Row="2" Grid.Column="1">
 
             <TabItem Header="Search">
-                <DataGrid ItemsSource="{Binding SearchResults}"  Name="GridSearchResults" AutoGenerateColumns="False">
+                <DataGrid ItemsSource="{Binding SearchResults, Mode=OneWay}" IsReadOnly="True"  Name="GridSearchResults" AutoGenerateColumns="False">
                 </DataGrid>
             </TabItem>
 

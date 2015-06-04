@@ -540,7 +540,19 @@ namespace AzureSearchTool
                         var row = SearchResults.Rows.Add();
                         foreach (var col in elem)
                         {
-                            row[col.Name] = col.Value;
+
+                            if (col.Name == "@search.score")
+                            {
+                                row[col.Name] = col.Value.Value;
+                            }
+                            else if (col.Name == "@search.highlights")
+                            {
+                                row[col.Name] = col.Value.Text;
+                            }
+                            else
+                            {
+                                    row[col.Name] = col.Value.Value;
+                            }
                         }
                     }
 
@@ -566,11 +578,11 @@ namespace AzureSearchTool
                             var json = JObject.Parse(tmp);
 
                             var error = json["error"];
-                            if (error["message"].HasValues)
+                            if (error["message"] != null)
                             {
                                 Error = string.Format("Error: {0}", error["message"].Value<string>());
                             }
-                            if (error["code"].HasValues)
+                            if (error["code"] != null)
                             {
                                 Error += string.Format("\r\nCode: {0}", error["code"].Value<string>());
                             }
