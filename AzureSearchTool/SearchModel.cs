@@ -530,7 +530,9 @@ namespace AzureSearchTool
                     //create the columns
                     foreach (var col in results.value.First)
                     {
-                        SearchResults.Columns.Add(col.Name);
+                        string name = col.Name;
+                        name = name.Replace(".", "\x00B7");
+                        SearchResults.Columns.Add(name);
                     }
 
                     //Todo: Mabye do more advanced column handling here, I am thinking of geolocation
@@ -540,18 +542,19 @@ namespace AzureSearchTool
                         var row = SearchResults.Rows.Add();
                         foreach (var col in elem)
                         {
-
-                            if (col.Name == "@search.score")
+                            string name = col.Name;
+                            name = name.Replace(".", "\x00B7");
+                            if (name == "@search.score")
                             {
-                                row[col.Name] = col.Value.Value;
+                                row[name] = col.Value.Value;
                             }
-                            else if (col.Name == "@search.highlights")
+                            else if (name == "@search.highlights")
                             {
-                                row[col.Name] = col.Value.Text;
+                                row[name] = col.Value.Text;
                             }
                             else
                             {
-                                    row[col.Name] = col.Value.Value;
+                                    row[name] = col.Value.Value;
                             }
                         }
                     }
