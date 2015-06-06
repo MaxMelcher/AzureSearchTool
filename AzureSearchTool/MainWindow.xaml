@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Azure Search Tool" Height="800" Width="1000" xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                       xmlns:azureSearchTool="clr-namespace:AzureSearchTool"
-                      BorderBrush="Black" Icon="/Images/AzureSearch_Logo.ico">
+                      BorderBrush="Black" Icon="/Images/AzureSearch_Logo.ico" SaveWindowPosition="True">
 
     <Window.DataContext>
         <azureSearchTool:SearchModel></azureSearchTool:SearchModel>
@@ -40,27 +40,9 @@
                                     <Paragraph Margin="20,20,0,0">
                                         You will find both values in the Azure Portal.
                                     </Paragraph>
-                                    <Paragraph Margin="20,20,0,0">
-                                        If you just wanna fiddle with the tool use the following:
-                                    </Paragraph>
                                 </Section>
                             </FlowDocument>
                         </RichTextBox>
-                        <Grid Margin="30 10 10 30">
-                            <Grid.RowDefinitions>
-                                <RowDefinition></RowDefinition>
-                                <RowDefinition></RowDefinition>
-                            </Grid.RowDefinitions>
-
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="100"></ColumnDefinition>
-                                <ColumnDefinition></ColumnDefinition>
-                            </Grid.ColumnDefinitions>
-                            <Label Grid.Row="0" Grid.Column="0" Content="Service:"/>
-                            <TextBox Grid.Row="0" Grid.Column="1" IsReadOnly="True" Text="maxmelcher" />
-                            <Label Grid.Row="1" Grid.Column="0" Content="API Key:"></Label>
-                            <TextBox Grid.Row="1" Grid.Column="1" IsReadOnly="True" Text="0D9FD54CA2B3E67C9BF59644B7F1A4CA"></TextBox>
-                        </Grid>
                     </StackPanel>
                     <GroupBox Grid.Row="1" Grid.Column="0" Header="Connection Details" Margin="30 0 30 0">
                         <Grid>
@@ -148,16 +130,29 @@
         <TabControl Grid.Row="2" Grid.Column="1">
 
             <TabItem Header="Search">
-                <DataGrid ItemsSource="{Binding SearchResults, Mode=OneWay}" IsReadOnly="True"  Name="GridSearchResults" AutoGenerateColumns="False">
+                <DataGrid ItemsSource="{Binding SearchResults, Mode=OneWay}" IsReadOnly="True" Name="GridSearchResults" AutoGenerateColumns="False">
                 </DataGrid>
             </TabItem>
 
             <TabItem Header="Index">
                 <StackPanel>
-                    <Label Content="Index Overview"></Label>
-                    <TextBlock><Run>Todo: Create Index Overview with all fields &amp; types and Index Statistics here.</Run><LineBreak/>
-                    <Run>Todo: Maybe allow addition of Fields?</Run>
-                    </TextBlock>
+                    <Label Content="Schema:" FontWeight="Bold" Margin="10 20 0 0"/>
+                    <DataGrid ItemsSource="{Binding Index.Fields, Mode=OneWay}" IsReadOnly="True"></DataGrid>
+                    <Label Content="Statistics:" FontWeight="Bold" Margin="10 20 0 0"/>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition></RowDefinition>
+                            <RowDefinition></RowDefinition>
+                            </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="120"></ColumnDefinition>
+                            <ColumnDefinition></ColumnDefinition>
+                        </Grid.ColumnDefinitions>
+                        <Label Grid.Column="0" Grid.Row="0" Content="Document Count:"></Label>
+                        <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Index.Statistics.DocumentCount, Mode=OneWay}" IsReadOnly="True"></TextBox>
+                        <Label Grid.Column="0" Grid.Row="1" Content="Storage Size:"></Label>
+                        <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Index.Statistics.StorageSizeReadable, Mode=OneWay}" IsReadOnly="True"></TextBox>
+                    </Grid>
                 </StackPanel>
             </TabItem>
 

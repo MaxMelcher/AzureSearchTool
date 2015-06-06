@@ -52,6 +52,8 @@ namespace AzureSearchTool
             }
         }
 
+        
+
         public string Url
         {
             //https://maxmelcher.search.windows.net/indexes/twittersearch/docs?search=fifa&api-version=2015-02-28&$filter=Score gt 0.5&$top=25&$count=true
@@ -61,8 +63,15 @@ namespace AzureSearchTool
                 {
                     return "Index not valid";
                 }
+                var url = string.Format("https://{0}.{1}/indexes/{2}/docs?api-version={3}", Service, BaseUrl, Index.Name, ApiVersion);
 
-                var url = string.Format("https://{0}.{1}/indexes/{2}/docs?search={3}&api-version={4}", Service, BaseUrl, Index.Name, SearchQuery, ApiVersion);
+                var atLeastOneParameter = false;
+
+                if (!string.IsNullOrEmpty(SearchQuery))
+                {
+                    var searchQuery = Uri.EscapeDataString(SearchQuery);
+                    url += string.Format("&search={0}", searchQuery);
+                }
 
                 if (!string.IsNullOrEmpty(Top))
                 {
@@ -76,7 +85,8 @@ namespace AzureSearchTool
 
                 if (!string.IsNullOrEmpty(Filter))
                 {
-                    url += string.Format("&$filter={0}", Filter);
+                    var filter = Uri.EscapeDataString(Filter); 
+                    url += string.Format("&$filter={0}", filter);
                 }
 
                 if (!string.IsNullOrEmpty(SearchMode))
@@ -106,7 +116,8 @@ namespace AzureSearchTool
 
                 if (!string.IsNullOrEmpty(Facet))
                 {
-                    url += string.Format("&facet={0}", Facet);
+                    var facet = Uri.EscapeDataString(Facet);
+                    url += string.Format("&facet={0}", facet);
                 }
 
                 if (!string.IsNullOrEmpty(Highlight))
@@ -116,12 +127,14 @@ namespace AzureSearchTool
 
                 if (!string.IsNullOrEmpty(HighlightPreTag))
                 {
-                    url += string.Format("&highlightPreTag={0}", HighlightPreTag);
+                    var highlightPreTag = Uri.EscapeDataString(HighlightPreTag);
+                    url += string.Format("&highlightPreTag={0}", highlightPreTag);
                 }
 
                 if (!string.IsNullOrEmpty(HighlightPostTag))
                 {
-                    url += string.Format("&highlightPostTag={0}", HighlightPostTag);
+                    var highlightPostTag = Uri.EscapeDataString(HighlightPostTag);
+                    url += string.Format("&highlightPostTag={0}", highlightPostTag);
                 }
 
                 if (!string.IsNullOrEmpty(ScoringProfile))
@@ -297,18 +310,49 @@ namespace AzureSearchTool
             var client = new WebClient();
             client.Headers.Add("Content-Type", "application/json; charset=utf-8");
             client.Headers.Add("api-key", ApiKey);
+            
             return client;
         }
 
         public void SelectIndex(Index index)
         {
             Index = index;
+
+            GetIndexStatistics();
+
+        }
+
+        private void GetIndexStatistics()
+        {
+            //https://MaxMelcher.search.windows.net/indexes/twittersearch/stats?api-version=2014-07-31-Preview
+            string statisticUrl = string.Format("https://{0}.{1}/indexes/{2}/stats?api-version={3}", Service, BaseUrl,  Index.Name, ApiVersion);
+            var client = GetWebClient();
+
+            var jsonStats = client.DownloadString(statisticUrl);
+
+            /*
+             {
+                "@odata.context": "https://maxmelcher.search.windows.net/$metadata#Microsoft.Azure.Search.V2014_07_31_Preview.IndexStatistics",
+                "documentCount": 683,
+                "storageSize": 294722
+             }
+             */
+
+            var stats = JsonConvert.DeserializeObject<dynamic>(jsonStats);
+            
+            if (stats.documentCount.Type == JTokenType.Integer)
+            {
+                Index.Statistics.DocumentCount = stats.documentCount.Value;
+            }
+
+            if (stats.storageSize.Type == JTokenType.Integer)
+            {
+                Index.Statistics.StorageSize = stats.storageSize.Value;
+            }
         }
 
 
-
         public event PropertyChangedEventHandler PropertyChanged;
-
         private void OnPropertyChanged(string propertyName)
         {
             if (PropertyChanged != null)
@@ -486,13 +530,6 @@ namespace AzureSearchTool
         {
             try
             {
-                if (string.IsNullOrEmpty(SearchQuery))
-                {
-                    Error = "No Search Query provided";
-                    Status = "No Search Query provided";
-                    return;
-                }
-
                 //clear the datatable and reset the columns
                 SearchResults.Clear();
                 SearchResults.Columns.Clear();
@@ -544,11 +581,11 @@ namespace AzureSearchTool
                         {
                             string name = col.Name;
                             name = name.Replace(".", "\x00B7");
-                            if (name == "@search.score")
+                            if (col.Name == "@search.score")
                             {
                                 row[name] = col.Value.Value;
                             }
-                            else if (name == "@search.highlights")
+                            else if (col.Name == "@search.highlights")
                             {
                                 row[name] = col.Value.Text;
                             }
