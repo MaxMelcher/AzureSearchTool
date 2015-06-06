@@ -16,7 +16,7 @@ namespace AzureSearchTool
         private string _service = "MaxMelcher";
         private string _apiKey = "B98A05BCCACF2A0BA020FE6299CD4AA1";
 
-        private string _apiVersion = "2015-02-28";
+        private string _apiVersion = "2015-02-28-Preview";
         private const string BaseUrl = "search.windows.net";
 
         public string Service
@@ -256,7 +256,7 @@ namespace AzureSearchTool
         public async void Connect()
         {
             //todo handle timeout here
-            //https://maxmelcher.search.windows.net/indexes?api-version=2015-02-28
+            //https://maxmelcher.search.windows.net/indexes?api-version=2015-02-28-Preview
 
             string indexUrl = string.Format("https://{0}.{1}/indexes?api-version={2}", Service, BaseUrl, ApiVersion);
 
