@@ -123,10 +123,8 @@
             </MenuItem>
         </Menu>
 
-
-
-        <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Url, Mode=OneWay}"></TextBox>
-
+        <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Url, Mode=OneWay}" IsReadOnly="True"></TextBox>
+        
         <TabControl Grid.Row="2" Grid.Column="1">
 
             <TabItem Header="Search">

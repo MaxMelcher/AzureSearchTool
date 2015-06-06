@@ -6,8 +6,6 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
-using System.Runtime.CompilerServices;
-using System.Threading.Tasks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -64,8 +62,6 @@ namespace AzureSearchTool
                     return "Index not valid";
                 }
                 var url = string.Format("https://{0}.{1}/indexes/{2}/docs?api-version={3}", Service, BaseUrl, Index.Name, ApiVersion);
-
-                var atLeastOneParameter = false;
 
                 if (!string.IsNullOrEmpty(SearchQuery))
                 {
@@ -225,10 +221,9 @@ namespace AzureSearchTool
             }
         }
 
-        private ObservableCollection<Index> _indexes = new ObservableCollection<Index>();
+        private readonly ObservableCollection<Index> _indexes = new ObservableCollection<Index>();
         private string _error;
         private Index _index;
-        private string _url;
         private string _searchQuery;
         private string _searchResultRaw;
         private string _status;
@@ -240,7 +235,7 @@ namespace AzureSearchTool
             get { return _indexes; }
         }
 
-        private DataTable _searchResults = new DataTable();
+        private readonly DataTable _searchResults = new DataTable();
         private string _searchMode;
         private string _searchFields;
         private string _count;
@@ -256,11 +251,11 @@ namespace AzureSearchTool
         public DataTable SearchResults
         {
             get { return _searchResults; }
-            set { _searchResults = value; }
         }
 
         public async void Connect()
         {
+            //todo handle timeout here
             //https://maxmelcher.search.windows.net/indexes?api-version=2015-02-28
 
             string indexUrl = string.Format("https://{0}.{1}/indexes?api-version={2}", Service, BaseUrl, ApiVersion);

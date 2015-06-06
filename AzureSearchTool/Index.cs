@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace AzureSearchTool
 {
-    public class Index : INotifyPropertyChanged
+    public class Index
     {
         public Index()
         {
@@ -12,7 +12,9 @@ namespace AzureSearchTool
         }
 
         public string Name { get; set; }
+
         public List<Field> Fields { get; set; }
+
         public Statistic Statistics { get; set; }
 
         //todo implement scoring profile
@@ -26,15 +28,6 @@ namespace AzureSearchTool
 
         //todo implement suggesters
         //public string Suggesters { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-        private void OnPropertyChanged(string propertyName)
-        {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-            }
-        }
     }
 
     public class Statistic : INotifyPropertyChanged
@@ -83,7 +76,7 @@ namespace AzureSearchTool
             if (value < 0) { return "-" + SizeSuffix(-value); }
 
             int i = 0;
-            decimal dValue = (decimal)value;
+            decimal dValue = value;
             while (Math.Round(dValue / 1024) >= 1)
             {
                 dValue /= 1024;
