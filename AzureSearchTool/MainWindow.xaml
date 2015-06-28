@@ -292,13 +292,13 @@
                     </GroupBox>
                 </StackPanel>
             </TabItem>
-            <TabItem Header="Suggestions">
+            <TabItem Header="Suggestions" Margin="5,0,-5,0">
                 <StackPanel>
                     <GroupBox Header="Suggestion">
                         <TextBox Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" KeyUp="Suggestion_KeyUp"></TextBox>
                     </GroupBox>
                     <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="45" Width="280" Text="{Binding Error}" Foreground="Red"/>
-                    <GroupBox Header="Query Options" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top"  Width="280" Height="139">
+                    <GroupBox Header="Query Options" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top"  Width="280" Height="236">
                         <ScrollViewer Margin="0,0,0,0">
                             <Grid>
 
@@ -312,6 +312,7 @@
                                     <RowDefinition Height="30" />
                                     <RowDefinition  Height="30" />
                                     <RowDefinition  Height="30" />
+                                    <RowDefinition  Height="30" />
                                 </Grid.RowDefinitions>
 
                                 <Label Grid.Column="0" Grid.Row="0" Content="$filter"></Label>
@@ -322,6 +323,9 @@
 
                                 <Label Grid.Column="0" Grid.Row="2" Content="highlightPostTag"></Label>
                                 <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding HighlightPostTag, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. Defaults to $lt;/em&gt;. A string tag that appends to hit highlights. Must be set with highlightPreTag. Reserved characters in URL must be percent-encoded (for example, %23 instead of #)." ></TextBox>
+
+                                <Label Grid.Column="0" Grid.Row="3" Content="suggesterName"></Label>
+                                <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding SuggesterName, UpdateSourceTrigger=PropertyChanged}" ToolTip="" ></TextBox>
                             </Grid>
                         </ScrollViewer>
                     </GroupBox>

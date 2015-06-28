@@ -65,13 +65,13 @@ namespace AzureSearchTool
         public String SuggesterName
         {
             get { return _suggesterName; }
-            set { _suggesterName = value; }
+            set { _suggesterName = value; OnPropertyChanged("Url"); }
         }
 
         public string MinimumCoverage
         {
             get { return _minimumCoverage; }
-            set { _minimumCoverage = value; }
+            set { _minimumCoverage = value; OnPropertyChanged("Url"); }
         }
 
         public string Url
@@ -175,6 +175,11 @@ namespace AzureSearchTool
                 if (!string.IsNullOrEmpty(MinimumCoverage))
                 {
                     url += string.Format("&minimumCoverage={0}", MinimumCoverage);
+                }
+
+                if (!string.IsNullOrEmpty(SuggesterName))
+                {
+                    url += string.Format("&suggesterName={0}", SuggesterName);
                 }
 
                 return url;
