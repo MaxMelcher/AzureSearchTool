@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 
 namespace AzureSearchTool
@@ -96,6 +97,11 @@ namespace AzureSearchTool
         {
             About about = new About();
             about.ShowDialog();
+        }
+
+        private void SearchMode_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            Model.SearchType = (SearchModel.SearchTypes) tabcontrolSearchMode.SelectedIndex;
         }
     }
 }

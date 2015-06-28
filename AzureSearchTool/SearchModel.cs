@@ -50,7 +50,18 @@ namespace AzureSearchTool
             }
         }
 
-        
+        public enum SearchTypes 
+        {
+            Search,
+            Suggest
+        }
+
+        public SearchTypes SearchType
+        {
+            get { return _searchType; }
+            set { _searchType = value; OnPropertyChanged("Url"); }
+        }
+
 
         public string Url
         {
@@ -61,7 +72,14 @@ namespace AzureSearchTool
                 {
                     return "Index not valid";
                 }
-                var url = string.Format("https://{0}.{1}/indexes/{2}/docs?api-version={3}", Service, BaseUrl, Index.Name, ApiVersion);
+
+                string type = "";
+                if (SearchType == SearchTypes.Suggest)
+                {
+                    type = "/suggest";
+                }
+
+                var url = string.Format("https://{0}.{1}/indexes/{2}/docs{4}?api-version={3}", Service, BaseUrl, Index.Name, ApiVersion, type);
 
                 if (!string.IsNullOrEmpty(SearchQuery))
                 {
@@ -247,6 +265,7 @@ namespace AzureSearchTool
         private string _highlightPostTag;
         private string _scoringProfile;
         private string _scoringParameter;
+        private SearchTypes _searchType = SearchTypes.Search;
 
         public DataTable SearchResults
         {
