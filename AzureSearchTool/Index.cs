@@ -9,6 +9,7 @@ namespace AzureSearchTool
         public Index()
         {
             Statistics = new Statistic();
+            Suggesters = new List<Suggester>();
         }
 
         public string Name { get; set; }
@@ -27,7 +28,20 @@ namespace AzureSearchTool
         //public string CorsOptions { get; set; }
 
         //todo implement suggesters
-        //public string Suggesters { get; set; }
+        public List<Suggester> Suggesters { get; set; }
+    }
+
+    public class Suggester
+    {
+        public String Name { get; set; }
+
+        public String SourceFieldsAsText
+        {
+            get { return string.Join("; ", SourceFields.ToArray()); }
+        }
+
+        public List<String> SourceFields { get; set; }
+        public String SearchMode { get; set; }
     }
 
     public class Statistic : INotifyPropertyChanged

@@ -128,14 +128,21 @@
         <TabControl Grid.Row="2" Grid.Column="1" Margin="24,0,0,0">
 
             <TabItem Header="Search">
-                <DataGrid ItemsSource="{Binding SearchResults, Mode=OneWay}" IsReadOnly="True" Name="GridSearchResults" AutoGenerateColumns="False">
-                </DataGrid>
+                <DataGrid ItemsSource="{Binding SearchResults, Mode=OneWay}" IsReadOnly="True" Name="GridSearchResults" AutoGenerateColumns="False" />
             </TabItem>
 
             <TabItem Header="Index">
                 <StackPanel>
                     <Label Content="Schema:" FontWeight="Bold" Margin="10 20 0 0"/>
                     <DataGrid ItemsSource="{Binding Index.Fields, Mode=OneWay}" IsReadOnly="True"></DataGrid>
+                    <Label Content="Suggesters:" FontWeight="Bold" Margin="10 20 0 0"/>
+                    <DataGrid ItemsSource="{Binding Index.Suggesters, Mode=OneWay}" IsReadOnly="True" AutoGenerateColumns="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}"></DataGridTextColumn>
+                            <DataGridTextColumn Header="SourceFields" Binding="{Binding SourceFieldsAsText}"></DataGridTextColumn>
+                            <DataGridTextColumn Header="SearchMode" Binding="{Binding SearchMode}"></DataGridTextColumn>
+                        </DataGrid.Columns>
+                    </DataGrid>
                     <Label Content="Statistics:" FontWeight="Bold" Margin="10 20 0 0"/>
                     <Grid>
                         <Grid.RowDefinitions>
@@ -278,7 +285,7 @@
                                 <ComboBox Grid.Column="1" Grid.Row="14" Text="{Binding ApiVersion, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding AvailableApiVersions}"  ToolTip="Selects the API-Version (this will be a dropdown soon)"></ComboBox>
 
                                 <Label Grid.Column="0" Grid.Row="15" Content="minimumCoverage"></Label>
-                                <TextBox Grid.Column="1" Grid.Row="15" Text="{Binding MinimumCoverage, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                <TextBox Grid.Column="1" Grid.Row="15" Text="{Binding MinimumCoverage, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. Defaults to 100. A number between 0 and 100 indicating the percentage of the index that must be covered by a search query in order for the query to be reported as a success. By default, the entire index must be available or the Search operation will return HTTP status code 503. If you set minimumCoverage and Search succeeds, it will return HTTP 200 and include a @search.coverage value in the response indicating the percentage of the index that was included in the query." />
                                 
                             </Grid>
                         </ScrollViewer>
