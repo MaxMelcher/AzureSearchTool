@@ -62,6 +62,17 @@ namespace AzureSearchTool
             set { _searchType = value; OnPropertyChanged("Url"); }
         }
 
+        public String SuggesterName
+        {
+            get { return _suggesterName; }
+            set { _suggesterName = value; }
+        }
+
+        public string MinimumCoverage
+        {
+            get { return _minimumCoverage; }
+            set { _minimumCoverage = value; }
+        }
 
         public string Url
         {
@@ -159,6 +170,11 @@ namespace AzureSearchTool
                 if (!string.IsNullOrEmpty(ScoringParameter))
                 {
                     url += string.Format("&scoringParameter={0}", ScoringParameter);
+                }
+
+                if (!string.IsNullOrEmpty(MinimumCoverage))
+                {
+                    url += string.Format("&minimumCoverage={0}", MinimumCoverage);
                 }
 
                 return url;
@@ -266,6 +282,8 @@ namespace AzureSearchTool
         private string _scoringProfile;
         private string _scoringParameter;
         private SearchTypes _searchType = SearchTypes.Search;
+        private string _suggesterName;
+        private string _minimumCoverage;
 
         public DataTable SearchResults
         {

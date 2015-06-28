@@ -223,6 +223,7 @@
                                     <RowDefinition />
                                     <RowDefinition />
                                     <RowDefinition />
+                                    <RowDefinition />
                                 </Grid.RowDefinitions>
                                 <Label Grid.Column="0" Grid.Row="0" Content="$filter"></Label>
                                 <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. A structured search expression in standard OData syntax. See OData Expression Syntax for Azure Search for details on the subset of the OData expression grammar that Azure Search supports."></TextBox>
@@ -275,6 +276,10 @@
 
                                 <Label Grid.Column="0" Grid.Row="14" Content="api-version"></Label>
                                 <ComboBox Grid.Column="1" Grid.Row="14" Text="{Binding ApiVersion, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding AvailableApiVersions}"  ToolTip="Selects the API-Version (this will be a dropdown soon)"></ComboBox>
+
+                                <Label Grid.Column="0" Grid.Row="15" Content="minimumCoverage"></Label>
+                                <TextBox Grid.Column="1" Grid.Row="15" Text="{Binding MinimumCoverage, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                
                             </Grid>
                         </ScrollViewer>
                     </GroupBox>
@@ -283,7 +288,7 @@
             <TabItem Header="Suggestions">
                 <StackPanel>
                     <GroupBox Header="Suggestion">
-                        <TextBox Text="{Binding SearchQuery}"></TextBox>
+                        <TextBox Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" KeyUp="Suggestion_KeyUp"></TextBox>
                     </GroupBox>
                     <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="45" Width="280" Text="{Binding Error}" Foreground="Red"/>
                     <GroupBox Header="Query Options" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top"  Width="280" Height="139">

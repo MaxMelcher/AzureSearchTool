@@ -103,5 +103,10 @@ namespace AzureSearchTool
         {
             Model.SearchType = (SearchModel.SearchTypes) tabcontrolSearchMode.SelectedIndex;
         }
+
+        private void Suggestion_KeyUp(object sender, KeyEventArgs e)
+        {
+            Model.Search();
+        }
     }
 }
