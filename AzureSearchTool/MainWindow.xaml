@@ -163,7 +163,7 @@
 
             <TabItem Header="Suggestion">
                 <StackPanel>
-                    <Label Content="Suggestions"></Label>
+                    <DataGrid ItemsSource="{Binding SuggestionResults, Mode=OneWay}" IsReadOnly="True" Name="GridSuggestionResults" AutoGenerateColumns="False" />
                 </StackPanel>
             </TabItem>
             <TabItem Header="Facets">
@@ -295,7 +295,7 @@
             <TabItem Header="Suggestions" Margin="5,0,-5,0">
                 <StackPanel>
                     <GroupBox Header="Suggestion">
-                        <TextBox Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" KeyUp="Suggestion_KeyUp"></TextBox>
+                        <TextBox Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" KeyUp="Suggestion_KeyUp" Name="Suggestion"></TextBox>
                     </GroupBox>
                     <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="45" Width="280" Text="{Binding Error}" Foreground="Red"/>
                     <GroupBox Header="Query Options" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top"  Width="280" Height="236">

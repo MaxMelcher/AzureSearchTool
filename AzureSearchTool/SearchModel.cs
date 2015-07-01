@@ -275,6 +275,7 @@ namespace AzureSearchTool
         }
 
         private readonly DataTable _searchResults = new DataTable();
+        private readonly DataTable _suggestionResults = new DataTable();
         private string _searchMode;
         private string _searchFields;
         private string _count;
@@ -293,6 +294,11 @@ namespace AzureSearchTool
         public DataTable SearchResults
         {
             get { return _searchResults; }
+        }
+
+        public DataTable SuggestionResults
+        {
+            get { return _suggestionResults; }
         }
 
         public async void Connect()
@@ -567,9 +573,11 @@ namespace AzureSearchTool
         {
             try
             {
-                //clear the datatable and reset the columns
+                //clear the datatables and reset the columns
                 SearchResults.Clear();
                 SearchResults.Columns.Clear();
+                SuggestionResults.Clear();
+                SuggestionResults.Columns.Clear();
 
                 var client = GetWebClient();
                 var watch = new Stopwatch();
@@ -599,36 +607,81 @@ namespace AzureSearchTool
                 //pretty print it
                 SearchResultRaw = JsonConvert.SerializeObject(results, Formatting.Indented);
 
+
+
                 if (results.value.Count > 0)
                 {
-                    //create the columns
-                    foreach (var col in results.value.First)
+                    if (SearchType == SearchTypes.Search)
                     {
-                        string name = col.Name;
-                        name = name.Replace(".", "\x00B7");
-                        SearchResults.Columns.Add(name);
-                    }
-
-                    //Todo: Mabye do more advanced column handling here, I am thinking of geolocation
-                    //create the values for the table
-                    foreach (var elem in results.value)
-                    {
-                        var row = SearchResults.Rows.Add();
-                        foreach (var col in elem)
+                        //create the columns
+                        foreach (var col in results.value.First)
                         {
                             string name = col.Name;
                             name = name.Replace(".", "\x00B7");
-                            if (col.Name == "@search.score")
+                            SearchResults.Columns.Add(name);
+                        }
+
+                        //Todo: Mabye do more advanced column handling here, I am thinking of geolocation
+                        //create the values for the table
+                        foreach (var elem in results.value)
+                        {
+                            var row = SearchResults.Rows.Add();
+                            foreach (var col in elem)
                             {
-                                row[name] = col.Value.Value;
-                            }
-                            else if (col.Name == "@search.highlights")
-                            {
-                                row[name] = col.Value.Text;
-                            }
-                            else
-                            {
+                                string name = col.Name;
+                                name = name.Replace(".", "\x00B7");
+                                if (col.Name == "@search.score")
+                                {
                                     row[name] = col.Value.Value;
+                                }
+                                else if (col.Name == "@search.highlights")
+                                {
+                                    row[name] = col.Value.Text;
+                                }
+                                else
+                                {
+                                    row[name] = col.Value.Value;
+                                }
+                            }
+                        }
+                    }
+                    else if (SearchType == SearchTypes.Suggest)
+                    {
+                        //{"@odata.context":"https://maxmelcher.search.windows.net/indexes('twittersearch')/$metadata#docs(StatusId)",
+                        //"value":[{"@search.text":"@NASA @SpaceX @NASA_Kennedy SpaceX rocket explodes after lift-off above Florida!! http://t.co/HPJYcZpSPQ  #SpaceX #NASA","StatusId":"615251440731226112"},
+                        //{"@search.text":"Friends if you find any fragments  from the SpaceX rocket accident do not touch and call 321-867-2121 @NASAKennedy #SpaceX #NASASocial","StatusId":"615248094909865984"},
+                        //{"@search.text":"RT @NASA: If you find debris in the vicinity of today @SpaceX launch mishap, please stay away &amp; call 321-867-2121. @NASA_Kennedy #SpaceX","StatusId":"615245961682665474"},
+                        //{"@search.text":"RT @NASA: If you find debris in the vicinity of today @SpaceX launch mishap, please stay away &amp; call 321-867-2121. @NASA_Kennedy #SpaceX","StatusId":"615245997443145728"},
+                        //{"@search.text":"RT @NASA: If you find debris in the vicinity of today @SpaceX launch mishap, please stay away &amp; call 321-867-2121. @NASA_Kennedy #SpaceX","StatusId":"615246353262731264"}]}
+
+                        //create the columns
+                        foreach (var col in results.value.First)
+                        {
+                            string name = col.Name;
+                            name = name.Replace(".", "\x00B7");
+                            SuggestionResults.Columns.Add(name);
+                        }
+
+                        //create the values for the table
+                        foreach (var elem in results.value)
+                        {
+                            var row = SuggestionResults.Rows.Add();
+                            foreach (var col in elem)
+                            {
+                                string name = col.Name;
+                                name = name.Replace(".", "\x00B7");
+                                if (col.Name == "@search.score")
+                                {
+                                    row[name] = col.Value.Value;
+                                }
+                                else if (col.Name == "@search.highlights")
+                                {
+                                    row[name] = col.Value.Text;
+                                }
+                                else
+                                {
+                                    row[name] = col.Value.Value;
+                                }
                             }
                         }
                     }

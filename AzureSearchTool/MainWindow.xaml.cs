@@ -82,6 +82,8 @@ namespace AzureSearchTool
 
         private void Searchbox_KeyUp(object sender, KeyEventArgs e)
         {
+            
+
             if (e.Key == Key.Return)
             {
                 Model.Search();
@@ -106,7 +108,15 @@ namespace AzureSearchTool
 
         private void Suggestion_KeyUp(object sender, KeyEventArgs e)
         {
+            if (Suggestion.Text.Length < 3)
+            {
+                Model.SuggestionResults.Clear();
+                return;
+            }
+
+            GridSuggestionResults.AutoGenerateColumns = false;
             Model.Search();
+            GridSuggestionResults.AutoGenerateColumns = true;
         }
     }
 }
