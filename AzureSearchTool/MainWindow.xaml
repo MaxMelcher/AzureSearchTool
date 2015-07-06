@@ -125,7 +125,7 @@
 
         <TextBox Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2" Text="{Binding Url, Mode=OneWay}" IsReadOnly="True"></TextBox>
 
-        <TabControl Grid.Row="2" Grid.Column="1" Margin="24,0,0,0">
+        <TabControl Grid.Row="2" Grid.Column="1" Margin="24,0,0,0" Name="tabResults">
 
             <TabItem Header="Search">
                 <DataGrid ItemsSource="{Binding SearchResults, Mode=OneWay}" IsReadOnly="True" Name="GridSearchResults" AutoGenerateColumns="False" />
@@ -298,7 +298,7 @@
                         <TextBox Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" KeyUp="Suggestion_KeyUp" Name="Suggestion"></TextBox>
                     </GroupBox>
                     <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Height="45" Width="280" Text="{Binding Error}" Foreground="Red"/>
-                    <GroupBox Header="Query Options" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top"  Width="280" Height="236">
+                    <GroupBox Header="Query Options" HorizontalAlignment="Left" Margin="10,10,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top"  Width="280" Height="451">
                         <ScrollViewer Margin="0,0,0,0">
                             <Grid>
 
@@ -310,6 +310,14 @@
 
                                 <Grid.RowDefinitions>
                                     <RowDefinition Height="30" />
+                                    <RowDefinition  Height="30" />
+                                    <RowDefinition  Height="30" />
+                                    <RowDefinition  Height="30" />
+                                    <RowDefinition  Height="30" />
+                                    <RowDefinition  Height="30" />
+                                    <RowDefinition  Height="30" />
+                                    <RowDefinition  Height="30" />
+                                    <RowDefinition  Height="30" />
                                     <RowDefinition  Height="30" />
                                     <RowDefinition  Height="30" />
                                     <RowDefinition  Height="30" />
@@ -326,6 +334,28 @@
 
                                 <Label Grid.Column="0" Grid.Row="3" Content="suggesterName"></Label>
                                 <TextBox Grid.Column="1" Grid.Row="3" Text="{Binding SuggesterName, UpdateSourceTrigger=PropertyChanged}" ToolTip="" ></TextBox>
+
+                                <Label Grid.Column="0" Grid.Row="4" Content="fuzzy"></Label>
+                                <CheckBox Grid.Column="1" Grid.Row="4" IsChecked="{Binding Fuzzy, UpdateSourceTrigger=PropertyChanged}" ToolTip="" ></CheckBox>
+
+                                <Label Grid.Column="0" Grid.Row="5" Content="searchFields"></Label>
+                                <TextBox Grid.Column="1" Grid.Row="5" Text="{Binding SearchFields, UpdateSourceTrigger=PropertyChanged}" ToolTip="" ></TextBox>
+
+                                <Label Grid.Column="0" Grid.Row="6" Content="$top"></Label>
+                                <TextBox Grid.Column="1" Grid.Row="6" Text="{Binding Top, UpdateSourceTrigger=PropertyChanged}" ToolTip="" ></TextBox>
+
+                                <Label Grid.Column="0" Grid.Row="7" Content="$orderby"></Label>
+                                <TextBox Grid.Column="1" Grid.Row="7" Text="{Binding Orderby, UpdateSourceTrigger=PropertyChanged}" ToolTip="" ></TextBox>
+
+                                <Label Grid.Column="0" Grid.Row="8" Content="$select"></Label>
+                                <TextBox Grid.Column="1" Grid.Row="8" Text="{Binding Select, UpdateSourceTrigger=PropertyChanged}" ToolTip="" ></TextBox>
+
+                                <Label Grid.Column="0" Grid.Row="9" Content="minimumCoverage"></Label>
+                                <TextBox Grid.Column="1" Grid.Row="9" Text="{Binding MinimumCoverage, UpdateSourceTrigger=PropertyChanged}" ToolTip="" ></TextBox>
+
+                                <Label Grid.Column="0" Grid.Row="10" Content="api-version"></Label>
+                                <ComboBox Grid.Column="1" Grid.Row="10" Text="{Binding ApiVersion, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding AvailableApiVersions}"  ToolTip="Selects the API-Version (this will be a dropdown soon)"></ComboBox>
+                                
                             </Grid>
                         </ScrollViewer>
                     </GroupBox>

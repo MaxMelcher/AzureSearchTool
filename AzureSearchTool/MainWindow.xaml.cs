@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Reflection;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,6 +22,8 @@ namespace AzureSearchTool
         public MainWindow()
         {
             InitializeComponent();
+
+            this.Title = "AzureSearchTool - (v." + Assembly.GetExecutingAssembly().GetName().Version + ")";
 
             Grid.DataContext = Model;
             Flyout.DataContext = Model;
@@ -82,7 +85,7 @@ namespace AzureSearchTool
 
         private void Searchbox_KeyUp(object sender, KeyEventArgs e)
         {
-            
+
 
             if (e.Key == Key.Return)
             {
@@ -103,17 +106,18 @@ namespace AzureSearchTool
 
         private void SearchMode_OnSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            Model.SearchType = (SearchModel.SearchTypes) tabcontrolSearchMode.SelectedIndex;
+            Model.SearchType = (SearchModel.SearchTypes)tabcontrolSearchMode.SelectedIndex;
+
+            if (Model.SearchType == SearchModel.SearchTypes.Suggest)
+            {
+                tabResults.SelectedIndex = 2;
+            }
         }
 
         private void Suggestion_KeyUp(object sender, KeyEventArgs e)
         {
-            if (Suggestion.Text.Length < 3)
-            {
-                Model.SuggestionResults.Clear();
-                return;
-            }
 
+            Model.SuggestionResults.Clear();
             GridSuggestionResults.AutoGenerateColumns = false;
             Model.Search();
             GridSuggestionResults.AutoGenerateColumns = true;

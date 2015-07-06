@@ -182,6 +182,11 @@ namespace AzureSearchTool
                     url += string.Format("&suggesterName={0}", SuggesterName);
                 }
 
+                if (Fuzzy)
+                {
+                    url += string.Format("&fuzzy={0}", Fuzzy);
+                }
+
                 return url;
             }
         }
@@ -230,6 +235,17 @@ namespace AzureSearchTool
             {
                 _top = value;
                 OnPropertyChanged("Top");
+                OnPropertyChanged("Url");
+            }
+        }
+
+        public bool Fuzzy
+        {
+            get { return _fuzzy; }
+            set
+            {
+                _fuzzy = value; 
+                OnPropertyChanged("Fuzzy");
                 OnPropertyChanged("Url");
             }
         }
@@ -290,6 +306,7 @@ namespace AzureSearchTool
         private SearchTypes _searchType = SearchTypes.Search;
         private string _suggesterName;
         private string _minimumCoverage;
+        private bool _fuzzy;
 
         public DataTable SearchResults
         {
@@ -458,6 +475,7 @@ namespace AzureSearchTool
                 _searchFields = tmp;
                 OnPropertyChanged("Skip");
                 OnPropertyChanged("SearchFields");
+                OnPropertyChanged("Url");
             }
         }
 
