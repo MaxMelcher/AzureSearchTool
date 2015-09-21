@@ -661,6 +661,11 @@ namespace AzureSearchTool
                                     var colValues = ((JArray)col.Value).Values();
                                     row[name] = String.Format("[{0}]", String.Join("; ", colValues));
                                 }
+                                else if (col.Value is JObject && col.Value.type != null && col.Value.type == "Point") // TODO explicit null check required?
+                                {
+                                    // Geography point
+                                    row[name] = String.Format("({0}; {1})", col.Value.coordinates[0], col.Value.coordinates[1]);
+                                }
                                 else
                                 {
                                     row[name] = col.Value.Value;
