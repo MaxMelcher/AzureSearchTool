@@ -656,6 +656,11 @@ namespace AzureSearchTool
                                 {
                                     row[name] = col.Value.Text;
                                 }
+                                else if (col.Value is JArray)
+                                {
+                                    var colValues = ((JArray)col.Value).Values();
+                                    row[name] = String.Format("[{0}]", String.Join("; ", colValues));
+                                }
                                 else
                                 {
                                     row[name] = col.Value.Value;
