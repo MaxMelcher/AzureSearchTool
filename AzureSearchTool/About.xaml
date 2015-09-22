@@ -12,7 +12,9 @@
         <RichTextBox Height="200" Margin="5 140 5 0">
             <FlowDocument>
                 <Paragraph>Use this tool to test out and debug search queries against the Azure Search REST API.</Paragraph>
-                <Paragraph>Contributions: None (yet)</Paragraph>
+                <Paragraph>Contributions:<LineBreak/>
+                    JiriBakker @JiriBakker (Thanks for multivalue support and geography points)
+                </Paragraph>
             </FlowDocument>
         </RichTextBox>
 
