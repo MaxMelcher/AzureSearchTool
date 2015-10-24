@@ -12,6 +12,12 @@ namespace AzureSearchTool
             Suggesters = new List<Suggester>();
         }
 
+        /// <summary>
+        /// if the index was created with an admin key, all fields are available
+        /// //todo verify if there is an option to enumerate all fields even with a query key
+        /// </summary>
+        public bool IsResolved = false;
+
         public string Name { get; set; }
 
         public List<Field> Fields { get; set; }

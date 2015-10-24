@@ -35,6 +35,14 @@ namespace AzureSearchTool
             }
         }
 
+        public bool IsAdminApiKey
+        {
+            get { return _isAdminApiKey; }
+            set { _isAdminApiKey = value;
+                OnPropertyChanged("IsAdminApiKey");
+            }
+        }
+
         private string _filter = "";
         public string Filter
         {
@@ -307,6 +315,10 @@ namespace AzureSearchTool
         private string _suggesterName;
         private string _minimumCoverage;
         private bool _fuzzy;
+        private bool _connected;
+        private bool _isAdminApiKey;
+        private bool _isQueryApiKey;
+        private string _indexName;
 
         public DataTable SearchResults
         {
@@ -320,6 +332,14 @@ namespace AzureSearchTool
 
         public async void Connect()
         {
+            //do nothing if a query key is selected
+            if (IsQueryApiKey)
+            {
+                Connected = true;
+                Error = "";
+                return;
+            }
+
             //todo handle timeout here
             //https://maxmelcher.search.windows.net/indexes?api-version=2015-02-28-Preview
 
@@ -343,16 +363,25 @@ namespace AzureSearchTool
 
                 foreach (Index index in result.value)
                 {
+                    index.IsResolved = true;
                     Indexes.Add(index);
                 }
                 Error = "";
+                Connected = true;
             }
             catch (Exception ex)
             {
                 Error = ex.Message;
                 Indexes.Clear();
                 Index = null;
+                Connected = false;
             }
+        }
+
+        public bool Connected
+        {
+            get { return _connected; }
+            set { _connected = value; OnPropertyChanged("Connected"); }
         }
 
         public string Error
@@ -384,30 +413,37 @@ namespace AzureSearchTool
 
         private void GetIndexStatistics()
         {
-            //https://MaxMelcher.search.windows.net/indexes/twittersearch/stats?api-version=2014-07-31-Preview
-            string statisticUrl = string.Format("https://{0}.{1}/indexes/{2}/stats?api-version={3}", Service, BaseUrl,  Index.Name, ApiVersion);
-            var client = GetWebClient();
-
-            var jsonStats = client.DownloadString(statisticUrl);
-
-            /*
-             {
-                "@odata.context": "https://maxmelcher.search.windows.net/$metadata#Microsoft.Azure.Search.V2014_07_31_Preview.IndexStatistics",
-                "documentCount": 683,
-                "storageSize": 294722
-             }
-             */
-
-            var stats = JsonConvert.DeserializeObject<dynamic>(jsonStats);
-            
-            if (stats.documentCount.Type == JTokenType.Integer)
+            try
             {
-                Index.Statistics.DocumentCount = stats.documentCount.Value;
+                //https://MaxMelcher.search.windows.net/indexes/twittersearch/stats?api-version=2014-07-31-Preview
+                string statisticUrl = string.Format("https://{0}.{1}/indexes/{2}/stats?api-version={3}", Service, BaseUrl, Index.Name, ApiVersion);
+                var client = GetWebClient();
+
+                var jsonStats = client.DownloadString(statisticUrl);
+
+                /*
+                 {
+                    "@odata.context": "https://maxmelcher.search.windows.net/$metadata#Microsoft.Azure.Search.V2014_07_31_Preview.IndexStatistics",
+                    "documentCount": 683,
+                    "storageSize": 294722
+                 }
+                 */
+
+                var stats = JsonConvert.DeserializeObject<dynamic>(jsonStats);
+
+                if (stats.documentCount.Type == JTokenType.Integer)
+                {
+                    Index.Statistics.DocumentCount = stats.documentCount.Value;
+                }
+
+                if (stats.storageSize.Type == JTokenType.Integer)
+                {
+                    Index.Statistics.StorageSize = stats.storageSize.Value;
+                }
             }
-
-            if (stats.storageSize.Type == JTokenType.Integer)
+            catch (Exception ex)
             {
-                Index.Statistics.StorageSize = stats.storageSize.Value;
+                Error = string.Format("Could not download index statistics, this is an indication that the service name, index name or the admin/query key is invalid. Exception: {0}", ex);
             }
         }
 
@@ -585,6 +621,18 @@ namespace AzureSearchTool
                 OnPropertyChanged("ScoringParameter");
                 OnPropertyChanged("Url");
             }
+        }
+
+        public bool IsQueryApiKey
+        {
+            get { return _isQueryApiKey; }
+            set { _isQueryApiKey = value; OnPropertyChanged("IsQueryApiKey"); }
+        }
+
+        public string IndexName
+        {
+            get { return _indexName; }
+            set { _indexName = value; OnPropertyChanged("IndexName"); }
         }
 
         public void Search()

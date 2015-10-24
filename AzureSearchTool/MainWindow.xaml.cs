@@ -54,7 +54,17 @@ namespace AzureSearchTool
 
         private void SelectIndex(object sender, RoutedEventArgs e)
         {
-            Index index = (Index)GridAvailableIndexes.SelectedItem;
+            Index index;
+            if (Model.IsAdminApiKey)
+            {
+                index = (Index) GridAvailableIndexes.SelectedItem;
+            }
+            else
+            {
+                index = new Index();
+                index.IsResolved = false;
+                index.Name = Model.IndexName;
+            }
             Model.SelectIndex(index);
             Flyout.IsOpen = false;
         }

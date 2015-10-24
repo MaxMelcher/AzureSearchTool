@@ -7,7 +7,7 @@
         <Label Content="AzureSearchTool for Azure Search" HorizontalAlignment="Left" Margin="127,10,0,0" VerticalAlignment="Top"/>
         <Label Content="Version: " HorizontalAlignment="Left" Margin="127,41,0,0" VerticalAlignment="Top" Width="65"/>
         <Label Content="{Binding Version}" HorizontalAlignment="Left" Margin="191,41,0,0" VerticalAlignment="Top" Height="26" Width="89"/>
-        <Label Content="License: MIT License, see License file" HorizontalAlignment="Left" Margin="127,74,0,0" VerticalAlignment="Top"/>
+        <Label Content="License: MIT License, see license file" HorizontalAlignment="Left" Margin="127,74,0,0" VerticalAlignment="Top"/>
         <Label Content="Author: Max Melcher (@maxmelcher) / http://melcher.it" HorizontalAlignment="Left" Margin="127,105,0,0" VerticalAlignment="Top"/>
         <RichTextBox Height="200" Margin="5 140 5 0">
             <FlowDocument>

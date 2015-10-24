@@ -98,6 +98,7 @@
     </Compile>
     <Compile Include="Field.cs" />
     <Compile Include="HideIfEmptyConverter.cs" />
+    <Compile Include="HideIfFalseConverter.cs" />
     <Compile Include="Index.cs" />
     <Compile Include="SearchModel.cs" />
     <Page Include="About.xaml">

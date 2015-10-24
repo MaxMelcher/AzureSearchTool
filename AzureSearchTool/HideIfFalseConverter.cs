@@ -5,11 +5,11 @@ using System.Windows.Data;
 
 namespace AzureSearchTool
 {
-    public class HideIfEmptyConverter : IValueConverter
+    public class HideIfFalseConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return string.IsNullOrEmpty((string) value) ? Visibility.Collapsed : Visibility.Visible;
+            return (bool)value ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
