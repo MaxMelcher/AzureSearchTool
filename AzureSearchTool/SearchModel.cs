@@ -81,7 +81,13 @@ namespace AzureSearchTool
             get { return _minimumCoverage; }
             set { _minimumCoverage = value; OnPropertyChanged("Url"); }
         }
+        private string EscapeFacet(string facet)
+        {
+            var facets = facet.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            var url = string.Join("&facet=", facets);
 
+            return url;
+        }
         public string Url
         {
             //https://maxmelcher.search.windows.net/indexes/twittersearch/docs?search=fifa&api-version=2015-02-28&$filter=Score gt 0.5&$top=25&$count=true
@@ -149,8 +155,7 @@ namespace AzureSearchTool
 
                 if (!string.IsNullOrEmpty(Facet))
                 {
-                    var facet = Uri.EscapeDataString(Facet);
-                    url += string.Format("&facet={0}", facet);
+                    url += string.Format("&facet={0}", EscapeFacet(Facet));
                 }
 
                 if (!string.IsNullOrEmpty(Highlight))
