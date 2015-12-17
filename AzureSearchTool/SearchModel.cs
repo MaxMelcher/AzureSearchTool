@@ -13,9 +13,10 @@ namespace AzureSearchTool
 {
     public class SearchModel : INotifyPropertyChanged
     {
-        private string _service = "MaxMelcher";
-        private string _apiKey = "B98A05BCCACF2A0BA020FE6299CD4AA1";
-
+        //private string _service = "MaxMelcher";
+        //private string _apiKey = "B98A05BCCACF2A0BA020FE6299CD4AA1";
+        private string _service = "michidemo";
+        private string _apiKey = "9513E3CCC71DB6524F5A5CB153E6B0B4";
         private string _apiVersion = "2015-02-28-Preview";
         private const string BaseUrl = "search.windows.net";
 
@@ -69,7 +70,11 @@ namespace AzureSearchTool
             get { return _searchType; }
             set { _searchType = value; OnPropertyChanged("Url"); }
         }
-
+        public string LuceneSearchType
+        {
+            get { return _LuceneSearchType; }
+            set { _LuceneSearchType = value; OnPropertyChanged("Url"); }
+        }
         public String SuggesterName
         {
             get { return _suggesterName; }
@@ -200,6 +205,10 @@ namespace AzureSearchTool
                     url += string.Format("&fuzzy={0}", Fuzzy);
                 }
 
+                if (!string.IsNullOrEmpty(LuceneSearchType))
+                {
+                    url += string.Format("&queryType={0}", LuceneSearchType);
+                }
                 return url;
             }
         }
@@ -324,7 +333,7 @@ namespace AzureSearchTool
         private bool _isAdminApiKey;
         private bool _isQueryApiKey;
         private string _indexName;
-
+        private string _LuceneSearchType;
         public DataTable SearchResults
         {
             get { return _searchResults; }

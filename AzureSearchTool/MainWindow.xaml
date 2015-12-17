@@ -212,51 +212,56 @@
 
         <TabControl Name="tabcontrolSearchMode"  HorizontalAlignment="Left" Height="749" Margin="10,10,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" Width="309" Grid.ColumnSpan="2" SelectionChanged="SearchMode_OnSelectionChanged">
             <TabItem Header="Search">
-                <ScrollViewer VerticalScrollBarVisibility="Auto">
-                    <StackPanel Margin="0,0,0,40" VerticalAlignment="Top" MinHeight="630">
+                    <StackPanel Margin="0,0,0,40" VerticalAlignment="Top" MinHeight="630" Orientation="Vertical">
                         <GroupBox Header="Query" HorizontalAlignment="Left" Margin="0,22,0,0" Grid.Row="2" Grid.Column="0" VerticalAlignment="Top" Width="280">
-                            <Grid>
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"></ColumnDefinition>
-                                    <ColumnDefinition Width="60"></ColumnDefinition>
-                                </Grid.ColumnDefinitions>
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="30"></RowDefinition>
-                                </Grid.RowDefinitions>
-                                <TextBox Grid.Row="0" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" KeyUp="Searchbox_KeyUp"></TextBox>
-                                <Button Grid.Row="0" Grid.Column="1" Content="Search" Width="50" Height="25" Click="Search"></Button>
-                            </Grid>
-                        </GroupBox>
-                        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="280" Text="{Binding Error}" Foreground="Red"/>
-                        <GroupBox Header="Query Options" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top" Height="500" Width="280">
+                            <StackPanel>
                                 <Grid>
                                     <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"></ColumnDefinition>
+                                        <ColumnDefinition Width="60"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="30"></RowDefinition>
+                                    </Grid.RowDefinitions>
+                                    <TextBox Grid.Row="0" Text="{Binding SearchQuery, UpdateSourceTrigger=PropertyChanged}" KeyUp="Searchbox_KeyUp"></TextBox>
+                                    <Button Grid.Row="0" Grid.Column="1" Content="Search" Width="50" Height="25" Click="Search"></Button>
+                                </Grid>
+                            </StackPanel>
+                        </GroupBox>
+                        <TextBlock HorizontalAlignment="Left" Margin="10,10,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="280" Text="{Binding Error}" Foreground="Red"/>
+                    <StackPanel ScrollViewer.VerticalScrollBarVisibility="Visible">
+                        <GroupBox Header="Query Options" HorizontalAlignment="Left" Margin="0,10,0,0" VerticalAlignment="Top" Height="580" Width="280">
+                            <ScrollViewer>
+                                <Grid Height="830" ScrollViewer.VerticalScrollBarVisibility="Visible">
+                                    <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="111"/>
-                                        <ColumnDefinition Width="133"/>
+                                        <ColumnDefinition Width="40"/>
+                                        <ColumnDefinition Width="93"/>
                                         <ColumnDefinition Width="24"/>
                                     </Grid.ColumnDefinitions>
-
                                     <Grid.RowDefinitions>
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
-                                        <RowDefinition />
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition  Height="30"/>
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition  Height="30"/>
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="30" />
+                                        <RowDefinition Height="30" />
                                     </Grid.RowDefinitions>
                                     <Label Grid.Column="0" Grid.Row="0" Content="$filter"></Label>
-                                    <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. A structured search expression in standard OData syntax. See OData Expression Syntax for Azure Search for details on the subset of the OData expression grammar that Azure Search supports."></TextBox>
-                                    <Button  Grid.Column="2" Grid.Row="0" Width="20" Height="20" VerticalAlignment="Top" Style="{DynamicResource MetroCircleButtonStyle}" ToolTip="Paste example" HorizontalAlignment="Left" Margin="5,5,-1,0" Visibility="Visible" Click="FilterExample">
+                                    <TextBox Grid.Column="1" Grid.Row="0" Text="{Binding Filter, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. A structured search expression in standard OData syntax. See OData Expression Syntax for Azure Search for details on the subset of the OData expression grammar that Azure Search supports." Grid.ColumnSpan="2"></TextBox>
+                                    <Button  Grid.Column="3" Grid.Row="0" Width="20" Height="20" VerticalAlignment="Top" Style="{DynamicResource MetroCircleButtonStyle}" ToolTip="Paste example" HorizontalAlignment="Left" Margin="5,5,-1,0" Visibility="Visible" Click="FilterExample">
                                         <Rectangle Width="10" Height="10">
                                             <Rectangle.Fill>
                                                 <VisualBrush Stretch="Fill" Visual="{StaticResource appbar_clipboard_paste}" />
@@ -265,54 +270,57 @@
                                     </Button>
 
                                     <Label Grid.Column="0" Grid.Row="1" Content="$top"></Label>
-                                    <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Top, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. The number of search results to retrieve. This defaults to 50. If you specify a value greater than 1000 and there are more than 1000 results, only the first 1000 results will be returned, along with a link to the next page of results (see @odata.nextLink in the example below)."></TextBox>
+                                    <TextBox Grid.Column="1" Grid.Row="1" Text="{Binding Top, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. The number of search results to retrieve. This defaults to 50. If you specify a value greater than 1000 and there are more than 1000 results, only the first 1000 results will be returned, along with a link to the next page of results (see @odata.nextLink in the example below)." Grid.ColumnSpan="2"></TextBox>
 
                                     <Label Grid.Column="0" Grid.Row="2" Content="$skip"></Label>
-                                    <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Skip, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. The number of search results to skip. This value cannot be greater than 100,000. If you need to scan documents in sequence, but cannot use $skip due to this limitation, consider using $orderby on a totally-ordered key and $filter with a range query instead."></TextBox>
+                                    <TextBox Grid.Column="1" Grid.Row="2" Text="{Binding Skip, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. The number of search results to skip. This value cannot be greater than 100,000. If you need to scan documents in sequence, but cannot use $skip due to this limitation, consider using $orderby on a totally-ordered key and $filter with a range query instead." Grid.ColumnSpan="2"></TextBox>
 
                                     <Label Grid.Column="0" Grid.Row="3" Content="searchMode"></Label>
-                                    <ComboBox Grid.Column="1" Grid.Row="3" ItemsSource="{Binding AvailableSearchModes, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SearchMode}" ToolTip="Optional. Defaults to any. Specifies whether any or all of the search terms must be matched in order to count the document as a match."></ComboBox>
+                                    <ComboBox Grid.Column="1" Grid.Row="3" ItemsSource="{Binding AvailableSearchModes, UpdateSourceTrigger=PropertyChanged}" SelectedItem="{Binding SearchMode}" ToolTip="Optional. Defaults to any. Specifies whether any or all of the search terms must be matched in order to count the document as a match." Grid.ColumnSpan="2"></ComboBox>
 
                                     <Label Grid.Column="0" Grid.Row="4" Content="searchFields"></Label>
-                                    <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding SearchFields, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. The list of comma-separated field names to search for the specified text. Target fields must be marked as searchable."></TextBox>
+                                    <TextBox Grid.Column="1" Grid.Row="4" Text="{Binding SearchFields, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. The list of comma-separated field names to search for the specified text. Target fields must be marked as searchable." Grid.ColumnSpan="2"></TextBox>
 
                                     <Label Grid.Column="0" Grid.Row="5" Content="count"></Label>
-                                    <ComboBox Grid.Column="1" Grid.Row="5" Text="true" SelectedItem="{Binding Count, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding AvailableCountModes}" ToolTip="Optional. Defaults to false. Specifies whether to fetch the total count of results. Setting this value to true may have a performance impact. Note that the count returned is an approximation."></ComboBox>
+                                    <ComboBox Grid.Column="1" Grid.Row="5" Text="true" SelectedItem="{Binding Count, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding AvailableCountModes}" ToolTip="Optional. Defaults to false. Specifies whether to fetch the total count of results. Setting this value to true may have a performance impact. Note that the count returned is an approximation." Grid.ColumnSpan="2"></ComboBox>
 
                                     <Label Grid.Column="0" Grid.Row="6" Content="orderby"></Label>
-                                    <TextBox Grid.Column="1" Grid.Row="6" Text="{Binding Orderby, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. A list of comma-separated expressions to sort the results by. Each expression can be either a field name or a call to the geo.distance() function. Each expression can be followed by asc to indicate ascending, and desc to indicate descending. The default is ascending order. Ties will be broken by the match scores of documents. If no $orderby is specified, the default sort order is descending by document match score. There is a limit of 32 clauses for $orderby."></TextBox>
+                                    <TextBox Grid.Column="1" Grid.Row="6" Text="{Binding Orderby, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. A list of comma-separated expressions to sort the results by. Each expression can be either a field name or a call to the geo.distance() function. Each expression can be followed by asc to indicate ascending, and desc to indicate descending. The default is ascending order. Ties will be broken by the match scores of documents. If no $orderby is specified, the default sort order is descending by document match score. There is a limit of 32 clauses for $orderby." Grid.ColumnSpan="2"></TextBox>
 
                                     <Label Grid.Column="0" Grid.Row="7" Content="select"></Label>
-                                    <TextBox Grid.Column="1" Grid.Row="7" Text="{Binding Select, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. A list of comma-separated fields to retrieve. If unspecified, all fields marked as retrievable in the schema are included. You can also explicitly request all fields by setting this parameter to *."></TextBox>
+                                    <TextBox Grid.Column="1" Grid.Row="7" Text="{Binding Select, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. A list of comma-separated fields to retrieve. If unspecified, all fields marked as retrievable in the schema are included. You can also explicitly request all fields by setting this parameter to *." Grid.ColumnSpan="2"></TextBox>
 
                                     <Label Grid.Column="0" Grid.Row="8" Content="facet"></Label>
-                                    <TextBox Grid.Column="1" Grid.Row="8" Text="{Binding Facet, UpdateSourceTrigger=PropertyChanged}" ToolTip="Zero or more fields to facet by. Optionally, the string may contain parameters to customize the faceting, expressed as comma-separated name:value pairs. Valid parameters are: ..."></TextBox>
+                                    <TextBox Grid.Column="1" Grid.Row="8" Text="{Binding Facet, UpdateSourceTrigger=PropertyChanged}" ToolTip="Zero or more fields to facet by. Optionally, the string may contain parameters to customize the faceting, expressed as comma-separated name:value pairs. Valid parameters are: ..." Grid.ColumnSpan="2"></TextBox>
 
                                     <Label Grid.Column="0" Grid.Row="9" Content="highlight"></Label>
-                                    <TextBox Grid.Column="1" Grid.Row="9" Text="{Binding Highlight, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. A set of comma-separated field names used for hit highlights. Only searchable fields can be used for hit highlighting."></TextBox>
+                                    <TextBox Grid.Column="1" Grid.Row="9" Text="{Binding Highlight, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. A set of comma-separated field names used for hit highlights. Only searchable fields can be used for hit highlighting." Grid.ColumnSpan="2"></TextBox>
 
                                     <Label Grid.Column="0" Grid.Row="10" Content="highlightPreTag"></Label>
-                                    <TextBox Grid.Column="1" Grid.Row="10" Text="{Binding HighlightPreTag, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. Defaults to &lt;/em&gt;. A string tag that appends to hit highlights. Must be set with highlightPostTag. Reserved characters in URL must be percent-encoded (for example, %23 instead of #)."></TextBox>
+                                    <TextBox Grid.Column="1" Grid.Row="10" Text="{Binding HighlightPreTag, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. Defaults to &lt;/em&gt;. A string tag that appends to hit highlights. Must be set with highlightPostTag. Reserved characters in URL must be percent-encoded (for example, %23 instead of #)." Grid.ColumnSpan="2"></TextBox>
 
                                     <Label Grid.Column="0" Grid.Row="11" Content="highlightPostTag"></Label>
-                                    <TextBox Grid.Column="1" Grid.Row="11" Text="{Binding HighlightPostTag, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. Defaults to $lt;/em&gt;. A string tag that appends to hit highlights. Must be set with highlightPreTag. Reserved characters in URL must be percent-encoded (for example, %23 instead of #)." ></TextBox>
+                                    <TextBox Grid.Column="1" Grid.Row="11" Text="{Binding HighlightPostTag, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. Defaults to $lt;/em&gt;. A string tag that appends to hit highlights. Must be set with highlightPreTag. Reserved characters in URL must be percent-encoded (for example, %23 instead of #)." Grid.ColumnSpan="2" ></TextBox>
 
                                     <Label Grid.Column="0" Grid.Row="12" Content="scoringProfile"></Label>
-                                    <TextBox Grid.Column="1" Grid.Row="12" Text="{Binding ScoringProfile, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                    <TextBox Grid.Column="1" Grid.Row="12" Text="{Binding ScoringProfile, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2"></TextBox>
 
                                     <Label Grid.Column="0" Grid.Row="13" Content="scoringParameter"></Label>
-                                    <TextBox Grid.Column="1" Grid.Row="13" Text="{Binding ScoringParameter, UpdateSourceTrigger=PropertyChanged}"></TextBox>
+                                    <TextBox Grid.Column="1" Grid.Row="13" Text="{Binding ScoringParameter, UpdateSourceTrigger=PropertyChanged}" Grid.ColumnSpan="2"></TextBox>
 
                                     <Label Grid.Column="0" Grid.Row="14" Content="api-version"></Label>
-                                    <ComboBox Grid.Column="1" Grid.Row="14" Text="{Binding ApiVersion, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding AvailableApiVersions}"  ToolTip="Selects the API-Version (this will be a dropdown soon)"></ComboBox>
+                                    <ComboBox Grid.Column="1" Grid.Row="14" Text="{Binding ApiVersion, UpdateSourceTrigger=PropertyChanged}" ItemsSource="{Binding AvailableApiVersions}"  ToolTip="Selects the API-Version (this will be a dropdown soon)" Grid.ColumnSpan="2"></ComboBox>
 
                                     <Label Grid.Column="0" Grid.Row="15" Content="minimumCoverage"></Label>
-                                    <TextBox Grid.Column="1" Grid.Row="15" Text="{Binding MinimumCoverage, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. Defaults to 100. A number between 0 and 100 indicating the percentage of the index that must be covered by a search query in order for the query to be reported as a success. By default, the entire index must be available or the Search operation will return HTTP status code 503. If you set minimumCoverage and Search succeeds, it will return HTTP 200 and include a @search.coverage value in the response indicating the percentage of the index that was included in the query." />
+                                    <TextBox Grid.Column="1" Grid.Row="15" Text="{Binding MinimumCoverage, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. Defaults to 100. A number between 0 and 100 indicating the percentage of the index that must be covered by a search query in order for the query to be reported as a success. By default, the entire index must be available or the Search operation will return HTTP status code 503. If you set minimumCoverage and Search succeeds, it will return HTTP 200 and include a @search.coverage value in the response indicating the percentage of the index that was included in the query." Grid.ColumnSpan="2" />
 
+                                    <Label Grid.Column="0" Grid.Row="16" Content="luceneSearchType"></Label>
+                                    <TextBox Grid.Column="1" Grid.Row="16" Text="{Binding LuceneSearchType, UpdateSourceTrigger=PropertyChanged}" ToolTip="Optional. Specify Lucene parser type, can be full ro simple" Grid.ColumnSpan="2" />
                                 </Grid>
+                            </ScrollViewer>
                         </GroupBox>
                     </StackPanel>
-                </ScrollViewer>
+                </StackPanel>
             </TabItem>
             <TabItem Header="Suggestions" Margin="5,0,-5,0">
                 <StackPanel>
